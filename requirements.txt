@@ -1,0 +1,6 @@
+langchain
+langchain-pinecone
+sentence-transformers
+pika #rabbitmq
+
+
