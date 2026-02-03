@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\napp.use(express.json());\n\nconst users = [];\nlet nextId = 1;\n\napp.post(\"/users\", (req, res) => {\n  const { email } = req.body;\n\n  if (!email) {\n    return res.status(400).end();\n  }\n\n  if (users.some(u => u.email === email)) {\n    return res.status(409).end();\n  }\n\n  const user = { id: nextId++, email };\n  users.push(user);\n\n  res.status(201).json(user);\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/users.test.js",
+      "content": "describe(\"POST /users\", () => {\n  it(\"returns 201 for valid email\", async () => {\n    const res = await request(app)\n      .post(\"/users\")\n      .send({ email: \"a@test.com\" });\n    expect(res.status).toBe(201);\n  });\n\n  it(\"returns 409 for duplicate email\", async () => {\n    await request(app)\n      .post(\"/users\")\n      .send({ email: \"b@test.com\" });\n\n    const res = await request(app)\n      .post(\"/users\")\n      .send({ email: \"b@test.com\" });\n    expect(res.status).toBe(409);\n  });\n});"
+    }
+  ]
+}
