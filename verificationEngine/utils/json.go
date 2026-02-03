@@ -1,4 +1,5 @@
-package main
+// Package utils
+package utils
 
 import (
 	"encoding/json"
