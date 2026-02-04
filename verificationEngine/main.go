@@ -12,6 +12,12 @@ func main() {
 	if err != nil {
 		log.Fatalln("error making spec: ", err)
 	}
-
 	fmt.Println(spec)
+
+	w, err := models.NewWorkspace(spec)
+	if err != nil {
+		log.Fatalln("error making workspace: ", err)
+	}
+	defer w.Clean()
+	fmt.Println(w.Path)
 }
