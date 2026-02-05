@@ -1,0 +1,32 @@
+{
+    "title": "Paginated Item Listing API",
+    "endpoints": [
+        {
+            "method": "GET",
+            "path": "/items",
+            "request": {
+                "page": {
+                    "type": "integer",
+                    "required": false,
+                    "default": 1,
+                    "description": "The requested page number. Must be positive."
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "required": false,
+                    "default": 10,
+                    "description": "The number of items per page. Must be between 1 and 50."
+                }
+            },
+            "responses": {
+                "200": "Successful retrieval. Body contains 'items' (array of {id: string, name: string}), 'totalItems' (int), 'currentPage' (int), 'totalPages' (int).",
+                "400": "Invalid pagination parameters (e.g., non-integer page/pageSize, out-of-range pageSize, non-positive page)."
+            },
+            "invaraints": [
+                "Each item must have a unique string 'id'.",
+                "Item names must be non-empty and not exceed 100 characters.",
+                "`pageSize` parameter must be within 1 to 50, inclusive."
+            ]
+        }
+    ]
+}

@@ -1,0 +1,68 @@
+from google import genai
+import os
+from dotenv import load_dotenv
+import json
+import pprint
+from .utils import res_to_json
+load_dotenv()
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+model = os.getenv("GEMINI_MODEL_NAME")
+
+def createSampleCode(contract: json = None):
+    """Create a sample code for the given problem statement"""
+    try:
+        if not contract:
+            with open("/home/shash/mnt/ssd1/projects/sinhagadHack/contract.json", "r") as f:
+                contract = json.load(f)
+            
+        prompt = f"""
+Generate a sample Express implementation for the following API contract.
+
+Rules:
+- Follow the contract EXACTLY (paths, methods, query params, request body, response body, status codes)
+- Implement ONLY the endpoints in the contract (do NOT add extra endpoints)
+- Handle ALL error cases mentioned in the contract
+- Do NOT reference tests or testing tools
+- Use ONLY JavaScript (CommonJS: require/module.exports)
+- Use ONLY Express (no other libraries)
+- Keep the code simple and readable
+- Store data in-memory (arrays/objects) unless the contract requires persistence
+- Return JSON responses using res.status(...).json(...)
+- Return error responses using the exact status codes and error formats defined in the contract
+- Put everything in a single file named `app.js`
+- Export the Express app using: module.exports = app
+- Do NOT call app.listen()
+
+---CONTRACT---
+{contract}
+---CONTRACT END---
+
+Return output STRICTLY in this JSON format:
+```json
+{{
+  "language": "javascript",
+  "framework": "express",
+  "files": [
+    {{
+      "path": "app.js",
+      "content": "<code>"
+    }}
+  ]
+}}
+```
+"""
+        response = client.models.generate_content(
+            model=model,
+            contents= prompt
+        )
+        response_json = res_to_json(response.text)
+        return response_json
+    except Exception as e:
+        print(f"ERROR: during sample code generation: {str(e)}")
+        raise
+
+if __name__ == "__main__":
+    print("INFO: Generating sample code")
+    res = createSampleCode()
+    pprint.pprint(res,indent=4)

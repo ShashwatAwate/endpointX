@@ -3,17 +3,17 @@ from google import genai
 import pprint
 from dotenv import load_dotenv
 from .problemBlueprint import createProblemBlueprint
+from .utils import res_to_json
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 model = os.getenv("GEMINI_MODEL_NAME")
 
 
-def createProblemDescription():
+def createProblemDescription(blueprint):
     """Creates a problem description"""
     try:
-        blueprint = createProblemBlueprint()
-        pprint.pprint(f"INFO:{blueprint}",indent=4)
+        #pprint.pprint(f"INFO:{blueprint}",indent=4)
 
         prompt = f"""You are designing a backend API coding challenge.
 Your task:
@@ -26,9 +26,32 @@ Your task:
 - Do NOT make overview or behaviour text too long, keep it maximum 40 words for overview and 20 words for behaviour.
 - ONLY follow the given blueprint to generate questions appropriately.
 - Problem must be solvable by REST APIs
+- MAKE SURE that path and methods ARE NOT IDENTICAL for more than one endpoint
+- KEEP invariants short
+- FOLLOW the format in the example for each endpoint, DO NOT COPY THE EXAMPLE, ONLY REFER AS CONTEXT
 ---BLUEPRINT START---
 {blueprint}
 ---BLUEPRINT END---
+
+---ENDPOINT EXAMPLE---
+ {{
+      "title": "create_user",
+      "overview":"Creates a new user account",
+      "method": "POST",
+      "path": "/users",
+      "request": {{
+        "email": {{ "type": "string", "required": true }}
+      }},
+      "responses": {{
+        "201": "User created",
+        "400": "Invalid request",
+        "409": "Email already exists"
+      }},
+      "invariants": [
+        "Email must be unique"
+      ]
+ }}
+ ---ENDPOINT EXAMPLE END---
 
 Output JSON with the following structure:
 ```json
@@ -37,13 +60,17 @@ Output JSON with the following structure:
 "overview": "",
 "endpoints":[
 {{
+"title":"",
+"overview":"",
 "method":"",
 "path": ""
-"behaviour": ""
+"behaviour": "",
+"responses":{{
+}},
+"invariants":[]
 }},
 ],
-"notes":[
-]
+"notes":[]
 }}
 ```
 """
@@ -52,10 +79,12 @@ Output JSON with the following structure:
         model = model,
         contents = prompt
         )
-        return response
+        json_res = res_to_json(response.text)
+        return json_res
     except Exception as e:
         print(f"ERROR: During generation of problem description {str(e)}")
+        raise
 
 if __name__ == "__main__":
     res = createProblemDescription()
-    print(res.text)
+    pprint.pprint(res,indent=4)
