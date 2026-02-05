@@ -1,0 +1,25 @@
+{
+  "name": "authjwt",
+  "version": "1.0.0",
+  "description": "Auth for endpointX",
+  "keywords": [
+    "auth"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "endpointX"
+  },
+  "license": "ISC",
+  "author": "adchad90",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.18.0"
+  }
+}
