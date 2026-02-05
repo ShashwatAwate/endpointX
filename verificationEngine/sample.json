@@ -14,7 +14,7 @@
   "test_files": [
     {
       "path": "tests/users.test.js",
-      "content": "describe(\"POST /users\", () => {\n  it(\"returns 201 for valid email\", async () => {\n    const res = await request(app)\n      .post(\"/users\")\n      .send({ email: \"a@test.com\" });\n    expect(res.status).toBe(201);\n  });\n\n  it(\"returns 409 for duplicate email\", async () => {\n    await request(app)\n      .post(\"/users\")\n      .send({ email: \"b@test.com\" });\n\n    const res = await request(app)\n      .post(\"/users\")\n      .send({ email: \"b@test.com\" });\n    expect(res.status).toBe(409);\n  });\n});"
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"POST /users\", () => {\n  it(\"returns 201 for valid email\", async () => {\n    const res = await request(app)\n      .post(\"/users\")\n      .send({ email: \"a@test.com\" });\n    expect(res.status).toBe(201);\n  });\n\n  it(\"returns 409 for duplicate email\", async () => {\n    await request(app)\n      .post(\"/users\")\n      .send({ email: \"b@test.com\" });\n\n    const res = await request(app)\n      .post(\"/users\")\n      .send({ email: \"b@test.com\" });\n    expect(res.status).toBe(409);\n  });\n});"
     }
   ]
 }
