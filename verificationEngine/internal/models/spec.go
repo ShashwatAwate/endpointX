@@ -4,7 +4,7 @@ package models
 import (
 	"fmt"
 
-	"github.com/ShashwatAwate/endpointX/verificationEngine/utils"
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/utils"
 	"github.com/google/uuid"
 )
 

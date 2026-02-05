@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ShashwatAwate/endpointX/verificationEngine/models"
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/engine"
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 	}
 	defer w.Clean()
 
-	output, err := RunTests(w)
+	output, err := engine.RunTests(w)
 	if err != nil {
 		log.Fatalln("error making workspace: ", err)
 	}

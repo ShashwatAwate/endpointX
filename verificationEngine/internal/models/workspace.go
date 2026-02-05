@@ -44,7 +44,7 @@ func NewWorkspace(spec *Spec) (*Workspace, error) {
 		return nil, err
 	}
 
-	cmd := exec.Command("bash", "-c", "npm i")
+	cmd := exec.Command("npm", "i")
 	cmd.Dir = dir
 
 	_, err = cmd.CombinedOutput()

@@ -6,10 +6,35 @@
 cd verificationEngine/
 ```
 
+## Installing Dependencies
+
 ```bash
 go mod tidy
 ```
 
+## Build and run (reccomended)
+
 ```bash
-go run main.go
+go build cmd/verification-engine && ./verification-engine
+```
+
+## if you have already built it
+
+Linux:
+
+```bash
+./verification-engine
+```
+
+Windows:
+
+```bash
+./verification-engine.exe
+```
+
+## If you want to run the project without building
+
+```bash
+go run cmd/verification-engine/main.go
+
 ```
