@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -31,29 +30,34 @@ func NewWorkspace(spec *Spec) (*Workspace, error) {
 		return nil, err
 	}
 
+	return &Workspace{Path: dir}, nil
+}
+
+// Init - this method initializes the workspace:
+// adds a package.json
+// installs npm dependencies
+func (w *Workspace) Init() error {
 	packageJSON, err := os.ReadFile("package.json")
 	if err != nil {
-		fmt.Println("ugga")
-		_ = os.RemoveAll(dir)
-		return nil, err
+		w.Clean()
+		return err
 	}
 
-	if err := os.WriteFile(filepath.Join(dir, "package.json"), packageJSON, 0o644); err != nil {
-		fmt.Println("bugga")
-		_ = os.RemoveAll(dir)
-		return nil, err
+	if err := os.WriteFile(filepath.Join(w.Path, "package.json"), packageJSON, 0o644); err != nil {
+		w.Clean()
+		return err
 	}
 
 	cmd := exec.Command("npm", "i")
-	cmd.Dir = dir
+	cmd.Dir = w.Path
 
 	_, err = cmd.CombinedOutput()
 	if err != nil {
-		_ = os.RemoveAll(dir)
-		return nil, err
+		w.Clean()
+		return err
 	}
 
-	return &Workspace{Path: dir}, nil
+	return nil
 }
 
 // Clean - cleanup function

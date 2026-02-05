@@ -18,6 +18,9 @@ func main() {
 	if err != nil {
 		log.Fatalln("error making workspace: ", err)
 	}
+	if err := w.Init(); err != nil {
+		log.Fatalln("error initializing the workspace: ", err)
+	}
 	defer w.Clean()
 
 	output, err := engine.RunTests(w)
