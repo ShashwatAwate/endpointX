@@ -6,12 +6,6 @@
 cd verificationEngine/
 ```
 
-## Installing Dependencies
-
-```bash
-go mod tidy
-```
-
 ## Build and run (reccomended)
 
 ```bash
