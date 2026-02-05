@@ -23,10 +23,17 @@ func main() {
 	}
 	defer w.Clean()
 
-	output, err := engine.RunTests(w)
+	result, err := engine.RunTests(w)
 	if err != nil {
-		log.Fatalln("error making workspace: ", err)
+		// gg ho gaya
+		log.Fatalln("engine error: ", err)
 	}
 
-	fmt.Println(output)
+	if result.Status == models.TestPassed {
+		fmt.Print("TEST PASSED!!!\n\n")
+	} else {
+		fmt.Print("test failed :(\n\n")
+	}
+
+	fmt.Println(result.Output)
 }

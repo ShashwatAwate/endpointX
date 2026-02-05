@@ -8,7 +8,7 @@
   "app_files": [
     {
       "path": "src/app.js",
-      "content": "const express = require(\"express\");\n\nconst app = express();\napp.use(express.json());\n\nconst users = [];\nlet nextId = 1;\n\napp.post(\"/users\", (req, res) => {\n  const { email } = req.body;\n\n  if (!email) {\n    return res.status(400).end();\n  }\n\n  if (users.some(u => u.email === email)) {\n    return res.status(409).end();\n  }\n\n  const user = { id: nextId++, email };\n  users.push(user);\n\n  res.status(201).json(user);\n});\n\nmodule.exports = app;"
+      "content": "const express = require(\"eress\");\n\nconst app = express();\napp.use(express.json());\n\nconst users = [];\nlet nextId = 1;\n\napp.post(\"/users\", (req, res) => {\n  const { email } = req.body;\n\n  if (!email) {\n    return res.status(400).end();\n  }\n\n  if (users.some(u => u.email === email)) {\n    return res.status(409).end();\n  }\n\n  const user = { id: nextId++, email };\n  users.push(user);\n\n  res.status(201).json(user);\n});\n\nmodule.exports = app;"
     }
   ],
   "test_files": [

@@ -7,14 +7,26 @@ import (
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
-func RunTests(w *models.Workspace) (string, error) {
+func RunTests(w *models.Workspace) (*models.Result, error) {
 	cmd := exec.Command("npm", "run", "test")
 	cmd.Dir = w.Path
 
 	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", err
+
+	result := &models.Result{
+		Output:   string(output),
+		Status:   models.TestPassed,
+		ExitCode: 0,
 	}
 
-	return string(output), nil
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			result.Status = models.TestFailed
+			result.ExitCode = exitErr.ExitCode()
+			return result, nil
+		}
+		return nil, err
+	}
+
+	return result, nil
 }
