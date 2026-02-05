@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -19,10 +21,35 @@ func NewWorkspace(spec *Spec) (*Workspace, error) {
 
 	// write app files
 	if err := writeFiles(spec.AppFiles, dir); err != nil {
+		_ = os.RemoveAll(dir)
 		return nil, err
 	}
 
+	// write test files
 	if err := writeFiles(spec.TestFiles, dir); err != nil {
+		_ = os.RemoveAll(dir)
+		return nil, err
+	}
+
+	packageJSON, err := os.ReadFile("package.json")
+	if err != nil {
+		fmt.Println("ugga")
+		_ = os.RemoveAll(dir)
+		return nil, err
+	}
+
+	if err := os.WriteFile(filepath.Join(dir, "package.json"), packageJSON, 0o644); err != nil {
+		fmt.Println("bugga")
+		_ = os.RemoveAll(dir)
+		return nil, err
+	}
+
+	cmd := exec.Command("bash", "-c", "npm i")
+	cmd.Dir = dir
+
+	_, err = cmd.CombinedOutput()
+	if err != nil {
+		_ = os.RemoveAll(dir)
 		return nil, err
 	}
 

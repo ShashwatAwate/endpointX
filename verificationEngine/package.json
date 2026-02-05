@@ -1,0 +1,20 @@
+{
+  "name": "verify-e813e340-b20c-419f-8e72-7237efb71c3b3024583582",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "jest": "^30.2.0",
+    "supertest": "^7.2.2"
+  }
+}
