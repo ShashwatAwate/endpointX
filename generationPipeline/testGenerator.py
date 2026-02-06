@@ -3,7 +3,7 @@ import json
 from dotenv import load_dotenv
 import os
 import pprint
-from .utils import res_to_json,dict_to_json
+from .utils import res_to_json,write_to_json
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -130,6 +130,8 @@ Return output STRICTLY in this JSON format:
             contents = prompt
         )
         response_json = res_to_json(response.text)
+        path = "./unitTestSample.json"
+        write_to_json(response_json,path)
         return response_json
     except Exception as e:
         print(f"ERROR: during generating unit test codes: {str(e)}")

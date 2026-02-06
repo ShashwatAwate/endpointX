@@ -1,5 +1,6 @@
 import re
 import json
+import os
 
 def res_to_json(res_content: str):
     try:
@@ -23,4 +24,13 @@ def dict_to_json(content: dict):
         return json_obj
     except Exception as e:
         print(f"dict to json conversion error: {str(e)}")
+        raise
+
+def write_to_json(content:dict, path:str):
+    try:
+        with open(path,"w",encoding="utf-8") as f:
+            json.dump(content,f,indent=2,ensure_ascii=False)
+        print(f"INFO: Written to json successfully {path}")
+    except Exception as e:
+        print("Wrting to json file failed")
         raise

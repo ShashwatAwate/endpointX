@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 import json
 import pprint
-from .utils import res_to_json
+from .utils import res_to_json,write_to_json
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -24,7 +24,7 @@ Rules:
 - Implement ONLY the endpoints in the contract (do NOT add extra endpoints)
 - Handle ALL error cases mentioned in the contract
 - Do NOT reference tests or testing tools
-- Use ONLY JavaScript (CommonJS: require/module.exports)
+- Use ONLY JavaScript (CommonJS)
 - Use ONLY Express (no other libraries)
 - Keep the code simple and readable
 - Store data in-memory (arrays/objects) unless the contract requires persistence
@@ -33,6 +33,12 @@ Rules:
 - Put everything in a single file named `app.js`
 - Export the Express app using: module.exports = app
 - Do NOT call app.listen()
+
+Implementation requirements:
+- Start the file with:
+  const express = require('express');
+  const app = express();
+  app.use(express.json());
 
 ---CONTRACT---
 {contract}
@@ -50,13 +56,15 @@ Return output STRICTLY in this JSON format:
     }}
   ]
 }}
-```
+
 """
         response = client.models.generate_content(
             model=model,
             contents= prompt
         )
         response_json = res_to_json(response.text)
+        path = "./sampleCode.json"
+        write_to_json(response_json,path)
         return response_json
     except Exception as e:
         print(f"ERROR: during sample code generation: {str(e)}")
