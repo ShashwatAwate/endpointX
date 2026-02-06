@@ -2,9 +2,12 @@
 package engine
 
 import (
+	"fmt"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/utils"
 )
 
 func RunTests(w *models.Workspace) (*models.Result, error) {
@@ -12,21 +15,31 @@ func RunTests(w *models.Workspace) (*models.Result, error) {
 	cmd.Dir = w.Path
 
 	output, err := cmd.CombinedOutput()
+	outputPath := filepath.Join(w.Path, "output.json")
 
 	result := &models.Result{
-		Output:   string(output),
-		Status:   models.TestPassed,
-		ExitCode: 0,
+		RawOutput: string(output),
+		Status:    models.TestPassed,
+		ExitCode:  0,
+		Jest:      nil,
 	}
 
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			result.Status = models.TestFailed
 			result.ExitCode = exitErr.ExitCode()
-			return result, nil
+		} else {
+			return nil, err
 		}
+	}
+
+	jest, err := utils.UnmarshalFromFile[models.JestOutput](outputPath)
+	if err != nil {
+		fmt.Println("could not parse json: ", err)
 		return nil, err
 	}
+
+	result.Jest = &jest
 
 	return result, nil
 }

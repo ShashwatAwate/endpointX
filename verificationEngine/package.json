@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest --runInBand"
+    "test": "jest --runInBand --json --outputFile=output.json"
   },
   "keywords": [],
   "author": "",

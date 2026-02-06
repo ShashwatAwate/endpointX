@@ -2,6 +2,7 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/engine"
@@ -35,7 +36,8 @@ func Verify() error {
 		fmt.Print("test failed :(\n\n")
 	}
 
-	fmt.Println(result.Output)
+	b, _ := json.MarshalIndent(result, "", "  ")
+	fmt.Println(string(b))
 
 	return nil
 }
