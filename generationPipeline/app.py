@@ -12,11 +12,11 @@ def publishToQueue(sampleCode:json=None,unitTests:json=None):
     """Recieves testcode and sample code, adds two imports and correct paths, and uploads final json to queue"""
     try:
         if not sampleCode:
-            with open ("/home/shash/mnt/ssd1/projects/sinhagadHack/sampleCode.json",'r') as f:
+            with open ("./data/sampleCode.json",'r') as f:
                 sampleCode = json.load(f)
 
         if not unitTests:
-            with open("/home/shash/mnt/ssd1/projects/sinhagadHack/unitTestSample.json",'r') as f:
+            with open("./data/unitTestSample.json",'r') as f:
                 unitTests = json.load(f)
 
         #adding require prefix to the unit Test code
