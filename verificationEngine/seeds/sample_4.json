@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\n\nlet users = [{ id: 1, email: \"a@test.com\" }];\n\napp.delete(\"/users/:id\", (req, res) => {\n  const id = Number(req.params.id);\n  const exists = users.some(u => u.id === id);\n\n  if (!exists) {\n    return res.status(404).end();\n  }\n\n  users = users.filter(u => u.id !== id);\n  res.status(204).end();\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/users.test.js",
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"DELETE /users/:id\", () => {\n  it(\"returns 204 when user is deleted\", async () => {\n    const res = await request(app).delete(\"/users/1\");\n    expect(res.status).toBe(204);\n  });\n\n  it(\"returns 404 for non-existing user\", async () => {\n    const res = await request(app).delete(\"/users/999\");\n    expect(res.status).toBe(404);\n  });\n});"
+    }
+  ]
+}

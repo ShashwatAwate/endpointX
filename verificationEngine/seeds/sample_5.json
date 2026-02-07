@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\napp.use(express.json());\n\napp.post(\"/login\", (req, res) => {\n  const { username, password } = req.body;\n\n  if (!username || !password) {\n    return res.status(400).end();\n  }\n\n  if (username === \"admin\" && password === \"secret\") {\n    return res.status(200).json({ token: \"fake-jwt-token\" });\n  }\n\n  res.status(401).end();\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/login.test.js",
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"POST /login\", () => {\n  it(\"returns 200 for valid credentials\", async () => {\n    const res = await request(app)\n      .post(\"/login\")\n      .send({ username: \"admin\", password: \"secret\" });\n    expect(res.status).toBe(200);\n    expect(res.body.token).toBeDefined();\n  });\n\n  it(\"returns 401 for invalid credentials\", async () => {\n    const res = await request(app)\n      .post(\"/login\")\n      .send({ username: \"admin\", password: \"wrong\" });\n    expect(res.status).toBe(401);\n  });\n});"
+    }
+  ]
+}

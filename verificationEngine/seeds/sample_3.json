@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\napp.use(express.json());\n\nconst users = [{ id: 1, email: \"a@test.com\" }];\n\napp.get(\"/users/:id\", (req, res) => {\n  const id = Number(req.params.id);\n  const user = users.find(u => u.id === id);\n\n  if (!user) {\n    return res.status(404).end();\n  }\n\n  res.json(user);\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/users.test.js",
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"GET /users/:id\", () => {\n  it(\"returns 200 for existing user\", async () => {\n    const res = await request(app).get(\"/users/1\");\n    expect(res.status).toBe(200);\n    expect(res.body.email).toBe(\"a@test.com\");\n  });\n\n  it(\"returns 404 for missing user\", async () => {\n    const res = await request(app).get(\"/users/999\");\n    expect(res.status).toBe(404);\n  });\n});"
+    }
+  ]
+}
