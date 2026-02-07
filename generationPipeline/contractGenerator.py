@@ -1,5 +1,6 @@
 import json
 from .utils import dict_to_json
+
 def createContract(problem_description: json):
     """Create problem description from the generated response"""
     try:

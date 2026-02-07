@@ -7,6 +7,7 @@ from .sampleGenerator import createSampleCode
 import json
 import os
 import pika
+from concurrent.futures import ThreadPoolExecutor
 
 def publishToQueue(sampleCode:json=None,unitTests:json=None):
     """Recieves testcode and sample code, adds two imports and correct paths, and uploads final json to queue"""
@@ -72,18 +73,25 @@ def publishToQueue(sampleCode:json=None,unitTests:json=None):
         raise
 if __name__=="__main__":
     try:
-        #print("INFO: Generating blueprint")
-        #blueprint = createProblemBlueprint()
-        #print("INFO: Generating problem description")
-        #description = createProblemDescription(blueprint=blueprint)
-        #print("INFO: Generating contract")
-        #contract = createContract(description)
-        #print("INFO: Generating Test Plan")
-        #testPlan = createUnitTestPlan(contract)
-        #print("INFO: Generating Unit Tests")
-        #unitTests = createUnitTestCode(testPlan,contract)
-        #print("INFO: Generating sample code")
-        #sampleCode = createSampleCode(contract)
-        publishToQueue()
+        print("INFO: Generating blueprint")
+        blueprint = createProblemBlueprint()
+        print("INFO: Generating problem description")
+        description = createProblemDescription(blueprint=blueprint)
+        print("INFO: Generating contract")
+        contract = createContract(description)
+        print("INFO: Generating Test Plan") 
+        testPlan = createUnitTestPlan(contract)
+        print("INFO:Generating Unit Tests and SampleCode")
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            fut_tests = executor.submit(createUnitTestCode,testPlan,contract)
+            fut_sample = executor.submit(createSampleCode,contract)
+
+            unitTests = fut_tests.result()
+            sampleCode = fut_sample.result()
+        print("INFO: Unit Tests")
+        print(unitTests)
+        print("INFO: Sample Code")
+        print(sampleCode) 
+        publishToQueue(sampleCode=sampleCode,unitTests=unitTests)
     except Exception as e:
         print(f"ERROR: in main {str(e)}")

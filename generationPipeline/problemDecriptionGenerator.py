@@ -1,13 +1,8 @@
-import os
-from google import genai
 import pprint
 from dotenv import load_dotenv
-from .problemBlueprint import createProblemBlueprint
-from .utils import res_to_json
+from .utils import res_to_json,call_model
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-model = os.getenv("GEMINI_MODEL_NAME")
 
 
 def createProblemDescription(blueprint):
@@ -74,11 +69,7 @@ Output JSON with the following structure:
 }}
 ```
 """
-
-        response = client.models.generate_content(
-        model = model,
-        contents = prompt
-        )
+        response = call_model(prompt,useCase="problem")
         json_res = res_to_json(response.text)
         return json_res
     except Exception as e:

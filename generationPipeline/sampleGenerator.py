@@ -1,13 +1,10 @@
-from google import genai
 import os
 from dotenv import load_dotenv
 import json
 import pprint
-from .utils import res_to_json,write_to_json
+from .utils import res_to_json,write_to_json,call_model
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-model = os.getenv("GEMINI_MODEL_NAME")
 
 def createSampleCode(contract: json = None):
     """Create a sample code for the given problem statement"""
@@ -58,10 +55,7 @@ Return output STRICTLY in this JSON format:
 }}
 
 """
-        response = client.models.generate_content(
-            model=model,
-            contents= prompt
-        )
+        response = call_model(prompt=prompt,useCase="sampleCode")
         response_json = res_to_json(response.text)
         path = "./data/sampleCode.json"
         write_to_json(response_json,path)
