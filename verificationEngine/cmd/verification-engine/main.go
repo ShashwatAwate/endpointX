@@ -11,10 +11,8 @@ func main() {
 	start := time.Now()
 	results := app.Start()
 
-	fmt.Println("\nDone in: ", time.Since(start))
-	fmt.Println("number of results: ", len(results))
-
-	for _, result := range results {
-		fmt.Println(result.Status)
+	for res := range results {
+		fmt.Println(res.Status)
 	}
+	fmt.Println("\nDone in: ", time.Since(start))
 }

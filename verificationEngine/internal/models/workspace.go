@@ -1,9 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/utils"
 )
 
 type Workspace struct {
@@ -51,8 +54,12 @@ func (w *Workspace) Init() error {
 	cmd := exec.Command("npm", "i")
 	cmd.Dir = w.Path
 
-	_, err = cmd.CombinedOutput()
+	rootNodeModules := "node_modules"
+	workspaceNodeModules := filepath.Join(w.Path, "node_modules")
+
+	err = utils.CopyDir(rootNodeModules, workspaceNodeModules)
 	if err != nil {
+		fmt.Println("error copying node modules: ", err)
 		w.Clean()
 		return err
 	}

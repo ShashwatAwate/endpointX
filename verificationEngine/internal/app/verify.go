@@ -3,12 +3,13 @@ package app
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/engine"
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
-func Start() []*models.Result {
+func Start() <-chan *models.Result {
 	seeds := []string{
 		"./seeds/sample_1.json",
 		"./seeds/sample_2.json",
@@ -17,47 +18,29 @@ func Start() []*models.Result {
 		"./seeds/sample_5.json",
 	}
 
-	results := []*models.Result{}
+	jobs := make(chan string, 100)
+	results := make(chan *models.Result, 100)
 
-	for i, seed := range seeds {
-		result, err := Verify(seed)
-		fmt.Println("done verifying seed: ", i+1)
-		if err != nil {
-			fmt.Println("error verifying seed: ", i+1)
-			fmt.Println("error: ", err)
-		}
-		results = append(results, result)
+	var wg sync.WaitGroup
+	workerCount := 5
+
+	wg.Add(workerCount)
+	for i := range workerCount {
+		fmt.Printf("worker %d working\n", i+1)
+		go engine.Worker(jobs, results, &wg)
 	}
+
+	go func() {
+		for _, seed := range seeds {
+			jobs <- seed
+		}
+		close(jobs)
+	}()
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 
 	return results
-}
-
-func Verify(jsonPath string) (*models.Result, error) {
-	spec, err := models.NewSpec(jsonPath)
-	if err != nil {
-		return nil, fmt.Errorf("error making spec: %w", err)
-	}
-
-	w, err := models.NewWorkspace(spec)
-	if err != nil {
-		return nil, fmt.Errorf("error making workspace: %w", err)
-	}
-	if err := w.Init(); err != nil {
-		return nil, fmt.Errorf("error initializing the workspace: %w", err)
-	}
-	defer w.Clean()
-
-	result, err := engine.RunTests(w)
-	if err != nil {
-		// gg ho gaya
-		return nil, fmt.Errorf("engine error: %w", err)
-	}
-
-	if result.Status == models.TestPassed {
-		fmt.Print("TEST PASSED!!!\n")
-	} else {
-		fmt.Print("test failed :(\n")
-	}
-
-	return result, nil
 }

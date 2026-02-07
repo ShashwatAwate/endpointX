@@ -6,6 +6,12 @@
 cd verificationEngine/
 ```
 
+## Install Node modules NEEDED FOR CHACHEING TO WORK
+
+```bash
+npm i
+```
+
 ## Build and run (reccomended)
 
 ```bash
@@ -30,5 +36,4 @@ Windows:
 
 ```bash
 go run cmd/verification-engine/main.go
-
 ```
