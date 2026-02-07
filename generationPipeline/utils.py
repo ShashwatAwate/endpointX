@@ -3,7 +3,16 @@ import json
 import os
 from dotenv import load_dotenv
 from google import genai
+from enum import Enum
+
+class UseCase(str, Enum):
+    PROBLEM = "problem"
+    TEST_PLAN = "testPlan"
+    UNIT_TEST = "unitTest"
+    SAMPLE_CODE = "sampleCode"
+
 load_dotenv()
+
 def res_to_json(res_content: str):
     try:
         pattern = r"```json(.*?)```"
@@ -37,13 +46,13 @@ def write_to_json(content:dict, path:str):
         print("Wrting to json file failed")
         raise
 
-def call_model(prompt:str,useCase:str):
+def call_model(prompt:str,useCase:UseCase):
     try:
         useCaseMapping = {
-            "problem":"PROBLEM_GEN_API_KEY",
-            "testPlan": "TEST_PLAN_GEN_API_KEY",
-            "unitTest": "UNIT_TEST_GEN_API_KEY",
-            "sampleCode": "SAMPLE_CODE_GEN_API_KEY"
+        UseCase.PROBLEM: "PROBLEM_GEN_API_KEY",
+        UseCase.TEST_PLAN: "TEST_PLAN_GEN_API_KEY",
+        UseCase.UNIT_TEST: "UNIT_TEST_GEN_API_KEY",
+        UseCase.SAMPLE_CODE: "SAMPLE_CODE_GEN_API_KEY"
         }
         keyStr = useCaseMapping.get(useCase)
         model = os.getenv("MODEL_NAME")

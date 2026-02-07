@@ -71,6 +71,7 @@ def publishToQueue(sampleCode:json=None,unitTests:json=None):
     except Exception as e:
         print(f"ERROR: Publishing to queue failed {str(e)}")
         raise
+
 if __name__=="__main__":
     try:
         print("INFO: Generating blueprint")
