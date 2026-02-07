@@ -15,7 +15,7 @@ def createUnitTestPlan(contract:json = None):
     """Create a unit test plan"""
     try:
         if not contract:
-            with open("/home/shash/mnt/ssd1/projects/sinhagadHack/contract.json", "r") as f:
+            with open("./data/contract.json", "r") as f:
                 contract = json.load(f)
             
         prompt = f"""
@@ -79,7 +79,7 @@ def createUnitTestCode(test_plan:json,contract:json=None):
     """Create the testing code for the unit tests"""
     try:
         if not contract:
-            with open("/home/shash/mnt/ssd1/projects/sinhagadHack/contract.json", "r") as f:
+            with open("./data/contract.json", "r") as f:
                 contract = json.load(f)
         prompt=f"""
 Generate ONLY unit tests for the following API contract.
@@ -130,7 +130,7 @@ Return output STRICTLY in this JSON format:
             contents = prompt
         )
         response_json = res_to_json(response.text)
-        path = "./unitTestSample.json"
+        path = "./data/unitTestSample.json"
         write_to_json(response_json,path)
         return response_json
     except Exception as e:

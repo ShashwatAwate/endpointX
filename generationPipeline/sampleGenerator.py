@@ -13,7 +13,7 @@ def createSampleCode(contract: json = None):
     """Create a sample code for the given problem statement"""
     try:
         if not contract:
-            with open("/home/shash/mnt/ssd1/projects/sinhagadHack/contract.json", "r") as f:
+            with open("./data/contract.json", "r") as f:
                 contract = json.load(f)
             
         prompt = f"""
@@ -63,7 +63,7 @@ Return output STRICTLY in this JSON format:
             contents= prompt
         )
         response_json = res_to_json(response.text)
-        path = "./sampleCode.json"
+        path = "./data/sampleCode.json"
         write_to_json(response_json,path)
         return response_json
     except Exception as e:
