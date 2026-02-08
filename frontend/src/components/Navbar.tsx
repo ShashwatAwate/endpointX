@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./mode-toggle"
+import { Link } from "react-router-dom"
 
 export default function Navbar() {
   return (
@@ -7,7 +8,9 @@ export default function Navbar() {
       {/* Left side */}
       <div className="flex items-center gap-6">
         <h1 className="text-xl font-bold tracking-tight">
-          endpoint<span className="text-primary">X</span>
+          <Link to={"/"}>
+            endpoint<span className="text-primary">X</span>
+          </Link>
         </h1>
 
         <div className="flex gap-2">
@@ -18,7 +21,12 @@ export default function Navbar() {
 
       {/* Right side */}
       <div className="flex gap-4">
-        <Button>Get Started</Button>
+        <Button>
+          <Link to={"/login"}>/login</Link>
+        </Button>
+        <Button>
+          <Link to={"/signup"}>/signup</Link>
+        </Button>
         <ModeToggle />
       </div>
     </nav>
