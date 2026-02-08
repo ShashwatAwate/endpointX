@@ -1,12 +1,14 @@
-import { ThemeProvider } from "@/components/theme-provider"
+import { Routes, Route } from "react-router-dom"
 import LandingPage from "./pages/LandingPage"
 
-function App() {
+export default function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <LandingPage />
-    </ThemeProvider>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+
+      {/* examples */}
+      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+      {/* <Route path="/quest/:id" element={<Quest />} /> */}
+    </Routes>
   )
 }
-
-export default App
