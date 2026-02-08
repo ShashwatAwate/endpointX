@@ -8,9 +8,11 @@ import json
 import os
 import pika
 from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
+load_dotenv()
 
 
-def publishToQueue(sampleCode: json = None, unitTests: json = None):
+def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: json = None):
     """Recieves testcode and sample code, adds two imports and correct paths, and uploads final json to queue"""
     try:
         if not sampleCode:
@@ -20,6 +22,10 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None):
         if not unitTests:
             with open("./data/unitTestSample.json", "r") as f:
                 unitTests = json.load(f)
+        
+        if not problemDesc:
+            with open("./data/problemDescSample.json","r") as f:
+                problemDesc = json.load(f)
 
         # adding require prefix to the unit Test code
         prefix = 'const request = require("supertest");\nconst app = require("./src/app");\n\n'
@@ -52,12 +58,24 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None):
             test_file = {"path": file.get("path"), "content": file.get("content")}
             message["test_files"].append(test_file)
 
+        #RabbitMQ 
         connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+        exchangeName = os.getenv("EXCHANGE")
+        verificationQName = os.getenv("VERIFICATION_QUEUE_NAME")
+        problemQName = os.getenv("PROBLEM_GEN_QUEUE_NAME")
+
         channel = connection.channel()
-        body = json.dumps(message).encode("utf-8")
-        channel.queue_declare(queue="VERIFICATION_Q")
-        channel.basic_publish(exchange="", routing_key="VERIFICATION_Q", body=body)
-        print("INFO: Message published")
+
+        verificationBody = json.dumps(message).encode("utf-8")
+        problemBody = problemDesc
+
+        channel.queue_declare(queue=verificationQName,durable=True)
+        channel.queue_declare(queue=problemQName,durable=True)
+
+        channel.basic_publish(exchange=exchangeName, routing_key=verificationQName, body=verificationBody)
+        channel.basic_publish(exchange=exchangeName,routing_key=problemQName,body = problemBody)
+
+        print("INFO: Messages published")
 
     except Exception as e:
         print(f"ERROR: Publishing to queue failed {str(e)}")

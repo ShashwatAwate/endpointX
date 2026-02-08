@@ -1,6 +1,7 @@
 import pprint
 from dotenv import load_dotenv
 from .utils import res_to_json,call_model
+import uuid
 load_dotenv()
 
 
@@ -71,6 +72,7 @@ Output JSON with the following structure:
 """
         response = call_model(prompt,useCase="problem")
         json_res = res_to_json(response.text)
+        json_res["id"] = str(uuid.uuid4())
         return json_res
     except Exception as e:
         print(f"ERROR: During generation of problem description {str(e)}")
