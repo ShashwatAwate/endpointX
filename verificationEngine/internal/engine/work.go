@@ -2,18 +2,12 @@ package engine
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
-func work(jsonPath string) (*models.Result, error) {
-	start := time.Now()
-	defer func() {
-		fmt.Println(jsonPath, "took ", time.Since(start))
-	}()
-
-	spec, err := models.NewSpec(jsonPath)
+func work(json []byte) (*models.Result, error) {
+	spec, err := models.NewSpec(json)
 	if err != nil {
 		return nil, fmt.Errorf("error making spec: %w", err)
 	}

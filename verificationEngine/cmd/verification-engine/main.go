@@ -2,19 +2,39 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"log"
 
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/app"
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/queue"
+	"github.com/streadway/amqp"
 )
 
 func main() {
-	start := time.Now()
+	w := app.NewWorkerPool(15, 100)
+	q, err := queue.New("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Fatalln("error creating queue: ", err)
+	}
 
-	w := app.NewWorkerPool(5, 100)
 	results := w.Start()
 
-	for res := range results {
-		fmt.Println(res.Status)
+	err = queue.Consume(
+		q.Ch,
+		"VERIFICATION_Q",
+		func(msg amqp.Delivery) error {
+			w.Jobs() <- msg.Body
+			return nil
+		},
+	)
+	if err != nil {
+		log.Fatalln("error creating queue: ", err)
 	}
-	fmt.Println("\nDone in: ", time.Since(start))
+	passedCnt := 0
+
+	for res := range results {
+		if res.Status == "passed" {
+			passedCnt += 1
+			fmt.Println(passedCnt)
+		}
+	}
 }

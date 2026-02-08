@@ -26,10 +26,10 @@ type Spec struct {
 }
 
 // NewSpec - this will return a new spec
-func NewSpec(path string) (*Spec, error) {
+func NewSpec(json []byte) (*Spec, error) {
 	id := uuid.NewString()
 
-	spec, err := utils.UnmarshalFromFile[Spec](path)
+	spec, err := utils.UnmarshalFromBytes[Spec](json)
 	if err != nil {
 		return nil, err
 	}

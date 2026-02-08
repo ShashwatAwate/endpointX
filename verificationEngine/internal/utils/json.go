@@ -23,3 +23,9 @@ func UnmarshalFromFile[T any](path string) (T, error) {
 	err = json.NewDecoder(file).Decode(&t)
 	return t, err
 }
+
+func UnmarshalFromBytes[T any](data []byte) (T, error) {
+	var t T
+	err := json.Unmarshal(data, &t)
+	return t, err
+}

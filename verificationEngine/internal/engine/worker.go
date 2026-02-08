@@ -7,7 +7,7 @@ import (
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
-func Worker(jobs <-chan string, result chan<- *models.Result, wg *sync.WaitGroup, id int) {
+func Worker(jobs <-chan []byte, result chan<- *models.Result, wg *sync.WaitGroup, id int) {
 	defer wg.Done()
 
 	for s := range jobs {
