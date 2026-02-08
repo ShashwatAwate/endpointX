@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden py-35 text-center">
+    <section className="relative overflow-hidden py-35 text-center font-mono">
       <Badge className="mb-4">Gamified API Development</Badge>
 
       <h1 className="text-5xl font-extrabold tracking-tight mb-6">
