@@ -9,7 +9,9 @@ import (
 
 func main() {
 	start := time.Now()
-	results := app.Start()
+
+	w := app.NewWorkerPool(5, 100)
+	results := w.Start()
 
 	for res := range results {
 		fmt.Println(res.Status)

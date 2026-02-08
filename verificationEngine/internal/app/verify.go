@@ -9,35 +9,43 @@ import (
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
-func Start() <-chan *models.Result {
+type WorkerPool struct {
+	workerCount int
+	jobs        chan string
+	results     chan *models.Result
+	wg          sync.WaitGroup
+}
+
+func NewWorkerPool(workerCount int, buffSize int) *WorkerPool {
+	return &WorkerPool{
+		workerCount: workerCount,
+		jobs:        make(chan string, buffSize),
+		results:     make(chan *models.Result, buffSize),
+	}
+}
+
+func (w *WorkerPool) Start() <-chan *models.Result {
 	seeds := []string{}
 
 	for i := 1; i <= 9; i++ {
 		seeds = append(seeds, fmt.Sprintf("./seeds/sample_%d.json", i))
 	}
-
-	jobs := make(chan string, 100)
-	results := make(chan *models.Result, 100)
-
-	var wg sync.WaitGroup
-	workerCount := 5
-
-	wg.Add(workerCount)
-	for i := range workerCount {
-		go engine.Worker(jobs, results, &wg, i+1)
+	w.wg.Add(w.workerCount)
+	for i := range w.workerCount {
+		go engine.Worker(w.jobs, w.results, &w.wg, i+1)
 	}
 
 	go func() {
 		for _, seed := range seeds {
-			jobs <- seed
+			w.jobs <- seed
 		}
-		close(jobs)
+		close(w.jobs)
 	}()
 
 	go func() {
-		wg.Wait()
-		close(results)
+		w.wg.Wait()
+		close(w.results)
 	}()
 
-	return results
+	return w.results
 }
