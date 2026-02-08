@@ -10,12 +10,10 @@ import (
 )
 
 func Start() <-chan *models.Result {
-	seeds := []string{
-		"./seeds/sample_1.json",
-		"./seeds/sample_2.json",
-		"./seeds/sample_3.json",
-		"./seeds/sample_4.json",
-		"./seeds/sample_5.json",
+	seeds := []string{}
+
+	for i := 1; i <= 9; i++ {
+		seeds = append(seeds, fmt.Sprintf("./seeds/sample_%d.json", i))
 	}
 
 	jobs := make(chan string, 100)
@@ -26,8 +24,7 @@ func Start() <-chan *models.Result {
 
 	wg.Add(workerCount)
 	for i := range workerCount {
-		fmt.Printf("worker %d working\n", i+1)
-		go engine.Worker(jobs, results, &wg)
+		go engine.Worker(jobs, results, &wg, i+1)
 	}
 
 	go func() {

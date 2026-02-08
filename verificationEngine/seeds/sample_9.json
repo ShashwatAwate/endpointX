@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\n\napp.get(\"/health\", (req, res) => {\n  res.json({ status: \"ok\" });\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/health.test.js",
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"GET /health\", () => {\n  it(\"returns ok status\", async () => {\n    const res = await request(app).get(\"/health\");\n\n    expect(res.status).toBe(200);\n    expect(res.body.status).toBe(\"ok\");\n  });\n});"
+    }
+  ]
+}

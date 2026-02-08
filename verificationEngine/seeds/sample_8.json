@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\napp.use(express.json());\n\nlet todos = [];\n\napp.post(\"/todos\", (req, res) => {\n  const { title } = req.body;\n\n  if (!title) {\n    return res.status(400).end();\n  }\n\n  const todo = { id: todos.length + 1, title };\n  todos.push(todo);\n\n  res.status(201).json(todo);\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/todos.test.js",
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"POST /todos\", () => {\n  it(\"creates a todo\", async () => {\n    const res = await request(app)\n      .post(\"/todos\")\n      .send({ title: \"Learn Go\" });\n\n    expect(res.status).toBe(201);\n    expect(res.body.title).toBe(\"Learn Go\");\n  });\n\n  it(\"returns 400 when title is missing\", async () => {\n    const res = await request(app)\n      .post(\"/todos\")\n      .send({});\n\n    expect(res.status).toBe(400);\n  });\n});"
+    }
+  ]
+}

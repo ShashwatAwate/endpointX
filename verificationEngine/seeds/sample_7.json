@@ -1,0 +1,20 @@
+{
+  "language": "javascript",
+  "runtime": "node18",
+  "framework": "express",
+  "test_framework": "jest",
+  "http_client": "supertest",
+  "entry": "src/app.js",
+  "app_files": [
+    {
+      "path": "src/app.js",
+      "content": "const express = require(\"express\");\n\nconst app = express();\n\napp.get(\"/profile\", (req, res) => {\n  const token = req.headers.authorization;\n\n  if (token !== \"Bearer valid-token\") {\n    return res.status(401).end();\n  }\n\n  res.json({ id: 1, name: \"Aditya\" });\n});\n\nmodule.exports = app;"
+    }
+  ],
+  "test_files": [
+    {
+      "path": "tests/profile.test.js",
+      "content": "const request = require(\"supertest\");\nconst app = require(\"../src/app\");\n\ndescribe(\"GET /profile\", () => {\n  it(\"returns 200 for valid token\", async () => {\n    const res = await request(app)\n      .get(\"/profile\")\n      .set(\"Authorization\", \"Bearer valid-token\");\n\n    expect(res.status).toBe(200);\n    expect(res.body.name).toBeDefined();\n  });\n\n  it(\"returns 401 for missing token\", async () => {\n    const res = await request(app).get(\"/profile\");\n    expect(res.status).toBe(401);\n  });\n});"
+    }
+  ]
+}

@@ -7,10 +7,12 @@ import (
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 )
 
-func Worker(jobs <-chan string, result chan<- *models.Result, wg *sync.WaitGroup) {
+func Worker(jobs <-chan string, result chan<- *models.Result, wg *sync.WaitGroup, id int) {
 	defer wg.Done()
 
 	for s := range jobs {
+		fmt.Printf("worker %d is working on %s\n", id, s)
+
 		res, err := work(s)
 		if err != nil {
 			fmt.Println("error doing job: ", err)
