@@ -11,12 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
 -- Stored questions / challenges
 CREATE TABLE IF NOT EXISTS questions (
   id SERIAL PRIMARY KEY,
+  public_id UUID,
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
   difficulty VARCHAR(50),
-  problem_statement JSONB,
-  contract JSONB NOT NULL,
-  test_plan JSONB,
+  api_spec JSONB,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -38,7 +37,6 @@ CREATE TABLE IF NOT EXISTS answers (
   question_id INTEGER NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
   code_files JSONB NOT NULL,
   language VARCHAR(50),
-  runtime VARCHAR(50),
   framework VARCHAR(50),
   entry_point VARCHAR(255),
   status VARCHAR(50) DEFAULT 'submitted',

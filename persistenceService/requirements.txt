@@ -1,0 +1,6 @@
+boto3
+pika
+sqlalchemy 
+psycopg[binary]
+sqlacodegen
+dotenv
