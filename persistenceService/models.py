@@ -2,7 +2,7 @@ from typing import Optional
 import datetime
 import uuid
 
-from sqlalchemy import DateTime, Double, ForeignKeyConstraint, Index, Integer, PrimaryKeyConstraint, String, Text, UniqueConstraint, Uuid, text
+from sqlalchemy import DateTime, Double, ForeignKeyConstraint, Index, PrimaryKeyConstraint, String, Text, UniqueConstraint, Uuid, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -16,16 +16,16 @@ class Questions(Base):
         PrimaryKeyConstraint('id', name='questions_pkey'),
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    public_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid)
     difficulty: Mapped[Optional[str]] = mapped_column(String(50))
     api_spec: Mapped[Optional[dict]] = mapped_column(JSONB)
+    entry_point: Mapped[Optional[str]] = mapped_column(String(255))
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('CURRENT_TIMESTAMP'))
 
-    answers: Mapped[list['Answers']] = relationship('Answers', back_populates='question')
-    unit_tests: Mapped[list['UnitTests']] = relationship('UnitTests', back_populates='question')
+    answers: Mapped[list['Answers']] = relationship('Answers', back_populates='question',passive_deletes=True)
+    unit_tests: Mapped[list['UnitTests']] = relationship('UnitTests', back_populates='question',passive_deletes=True)
 
 
 class Users(Base):
@@ -35,7 +35,7 @@ class Users(Base):
         UniqueConstraint('email', name='users_email_key')
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -55,16 +55,15 @@ class Answers(Base):
         Index('idx_answers_user_id', 'user_id')
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    question_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    question_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     code_files: Mapped[dict] = mapped_column(JSONB, nullable=False)
     language: Mapped[Optional[str]] = mapped_column(String(50))
     framework: Mapped[Optional[str]] = mapped_column(String(50))
-    entry_point: Mapped[Optional[str]] = mapped_column(String(255))
     status: Mapped[Optional[str]] = mapped_column(String(50), server_default=text("'submitted'::character varying"))
     score: Mapped[Optional[float]] = mapped_column(Double(53))
-    feedback: Mapped[Optional[dict]] = mapped_column(JSONB)
+    test_results: Mapped[Optional[dict]] = mapped_column(JSONB)
     submitted_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, server_default=text('CURRENT_TIMESTAMP'))
 
     question: Mapped['Questions'] = relationship('Questions', back_populates='answers')
@@ -79,8 +78,8 @@ class UnitTests(Base):
         Index('idx_unit_tests_question_id', 'question_id')
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    question_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    question_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     test_files: Mapped[dict] = mapped_column(JSONB, nullable=False)
     language: Mapped[Optional[str]] = mapped_column(String(50))
     test_framework: Mapped[Optional[str]] = mapped_column(String(50))

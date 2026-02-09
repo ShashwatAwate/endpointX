@@ -58,12 +58,14 @@ func (s *Spec) validate() error {
 		s.Entry = "src/app.js"
 	}
 
-	if s.UserID == "" {
-		s.UserID = "NoID"
+	if s.UserID == "" && s.IsProblemGenerated!=1 {
+		// TODO: fix this
+		s.IsProblemGenerated=1
 	}
 
 	if s.IsProblemGenerated != 1 {
 		s.IsProblemGenerated = 0
+		s.UserID = "NoID"
 	}
 
 	if len(s.AppFiles) == 0 {

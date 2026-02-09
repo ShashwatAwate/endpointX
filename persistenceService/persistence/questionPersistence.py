@@ -1,10 +1,9 @@
 from ..db import engine
 from ..models import Questions
-from sqlalchemy.orm import sessionmaker
 import uuid
 import json
 
-def create_question(payload:json):
+def createQuestion(payload:json,session):
     """Creates a row in Questions
     input:
 {{
@@ -28,40 +27,42 @@ def create_question(payload:json):
     """
     
     try:
-        Session = sessionmaker(bind=engine)
         title = payload.get("title")
-        publicId = payload.get("id")
+        id = payload.get("id")
         description = payload.get("overview")
         api_spec = payload.get("endpoints")
-        public_uuid = uuid.UUID(publicId) if publicId else None
-        with Session() as session:
-            q = Questions(
+        difficulty = "medium"
+        id_uuid = uuid.UUID(id) if id else None
+        
+        q = Questions(
                 title=title,
                 description=description,
-                public_id=public_uuid,
-                api_spec=api_spec
+                id=id_uuid,
+                api_spec=api_spec,
+                difficulty = difficulty
             )
 
-            session.add(q)
-            session.commit()
-            session.refresh(q)
+        session.add(q)
+        session.flush()
+        return q
 
-            return q
     except Exception as e:
         print(f"ERROR: creating question in db failed {str(e)}")
         raise
 
-def delete_question(questionId: int):
+def deleteQuestion(questionId: str,session):
     """Deletes the question(duh)"""
     try:
-        Session = sessionmaker(bind=engine)
-        with Session() as session:
-            q = session.get(Questions,questionId)
-            if not q:
-                return False
-            session.delete(q)
-            session.commit()
-            return True
+        print(questionId)
+
+        questionId_uuid = uuid.UUID(questionId)
+        q = session.get(Questions,questionId_uuid)
+        if not q:
+            return False
+        session.delete(q)
+        session.flush()
+        return True
     except Exception as e:
-        print(f"ERROR: deleting question failed {str(e)}")
+
+        print(f"ERROR: deleting question failed for question {str(e)}")
         raise

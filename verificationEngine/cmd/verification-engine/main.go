@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
-
+	"fmt"
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/app"
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/queue"
 	"github.com/joho/godotenv"
@@ -39,6 +39,7 @@ func main() {
 	}
 
 	for res := range results {
+		fmt.Println(res.Status)
 		payload, err := json.Marshal(res)
 		if err != nil {
 			log.Println("failed to marshal json: ", err)

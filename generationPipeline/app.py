@@ -1,4 +1,4 @@
-from .problemBlueprint import createProblemBlueprint
+from .problemBlueprintGenerator import createProblemBlueprint
 from .problemDecriptionGenerator import createProblemDescription
 from .contractGenerator import createContract
 from .testGenerator import createUnitTestCode, createUnitTestPlan
@@ -6,25 +6,30 @@ from .sampleGenerator import createSampleCode
 
 import json
 import os
+from pathlib import Path
 import pika
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
+import uuid
 load_dotenv()
 
 
 def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: json = None):
     """Recieves testcode and sample code, adds two imports and correct paths, and uploads final json to queue"""
     try:
+        BASE_DIR = Path(__file__).resolve().parent.parent   # root/
+        DATA_DIR = BASE_DIR / "data"
+
         if not sampleCode:
-            with open("./data/sampleCode.json", "r") as f:
+            with open(DATA_DIR / "sampleCode.json", "r", encoding="utf-8") as f:
                 sampleCode = json.load(f)
 
         if not unitTests:
-            with open("./data/unitTestSample.json", "r") as f:
+            with open(DATA_DIR / "unitTestSample.json", "r", encoding="utf-8") as f:
                 unitTests = json.load(f)
-        
+
         if not problemDesc:
-            with open("./data/problemDescSample.json","r") as f:
+            with open(DATA_DIR / "problemDescSample.json", "r", encoding="utf-8") as f:
                 problemDesc = json.load(f)
 
         # adding require prefix to the unit Test code
@@ -41,6 +46,7 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
             file["path"] = newPath
 
         message = {}
+        message['question_id'] = problemDesc.get('id')
         message["language"] = sampleCode.get("language", unitTests.get("language"))
         message["framework"] = sampleCode.get("framework")
         message["test_framework"] = unitTests.get("test_framework")
@@ -58,6 +64,12 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
             test_file = {"path": file.get("path"), "content": file.get("content")}
             message["test_files"].append(test_file)
 
+        
+        generationBody = {}
+        generationBody['job_id'] = str(uuid.uuid4())
+        generationBody['problem_description'] = problemDesc
+        generationBody['unit_tests'] = unitTests
+
         #RabbitMQ 
         connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
         exchangeName = os.getenv("EXCHANGE")
@@ -67,7 +79,7 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
         channel = connection.channel()
 
         verificationBody = json.dumps(message).encode("utf-8")
-        problemBody = problemDesc
+        generationBody = json.dumps(generationBody).encode("utf-8")
 
         channel.exchange_declare(exchange=exchangeName,exchange_type="direct",durable=True)
 
@@ -75,7 +87,7 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
         channel.queue_declare(queue=problemQName,durable=True)
 
         channel.basic_publish(exchange=exchangeName, routing_key=verificationQName, body=verificationBody)
-        channel.basic_publish(exchange=exchangeName,routing_key=problemQName,body = problemBody)
+        channel.basic_publish(exchange=exchangeName,routing_key=problemQName,body = generationBody)
 
         print("INFO: Messages published")
 
@@ -86,10 +98,10 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
 
 if __name__ == "__main__":
     try:
-        # print("INFO: Generating blueprint")
-        # blueprint = createProblemBlueprint()
-        # print("INFO: Generating problem description")
-        # description = createProblemDescription(blueprint=blueprint)
+        print("INFO: Generating blueprint")
+        blueprint = createProblemBlueprint()
+        print("INFO: Generating problem description")
+        description = createProblemDescription(blueprint=blueprint)
         # print("INFO: Generating contract")
         # contract = createContract(description)
         # print("INFO: Generating Test Plan")
@@ -105,7 +117,6 @@ if __name__ == "__main__":
         # print(unitTests)
         # print("INFO: Sample Code")
         # print(sampleCode)
-        for i in range(100):
-            publishToQueue()
+        publishToQueue(problemDesc=description)
     except Exception as e:
         print(f"ERROR: in main {str(e)}")

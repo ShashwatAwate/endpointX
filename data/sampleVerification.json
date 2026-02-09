@@ -1,0 +1,48 @@
+{
+  "user_id": "user_123",
+  "question_id": "question_789",
+  "isProblemGenerated": 0,
+  "status": "completed",
+  "rawOutput": "FAIL  src/math.test.js\n  ✕ multiplies two numbers (7 ms)\n  ✓ adds two numbers (3 ms)\n\nTest Suites: 1 failed, 1 total\nTests:       1 failed, 1 passed, 2 total",
+  "app_files": [
+    {
+      "name": "math.js",
+      "path": "src/math.js",
+      "content": "export function add(a, b) { return a + b; }\nexport function multiply(a, b) { return a * b; }"
+    },
+    {
+      "name": "math.test.js",
+      "path": "src/math.test.js",
+      "content": "import { add, multiply } from './math';\n\ntest('adds two numbers', () => {\n  expect(add(2, 3)).toBe(5);\n});\n\ntest('multiplies two numbers', () => {\n  expect(multiply(2, 3)).toBe(5);\n});"
+    }
+  ],
+  "jestOutput": {
+    "success": false,
+    "numFailedTests": 1,
+    "numPassedTests": 1,
+    "numTotalTests": 2,
+    "numFailedTestSuites": 1,
+    "numPassedTestSuites": 0,
+    "numTotalTestSuites": 1,
+    "testResults": [
+      {
+        "name": "math.test.js",
+        "status": "failed",
+        "message": "Expected: 5\nReceived: 6",
+        "assertionResults": [
+          {
+            "fullName": "math › adds two numbers",
+            "status": "passed",
+            "duration": 3
+          },
+          {
+            "fullName": "math › multiplies two numbers",
+            "status": "failed",
+            "duration": 7
+          }
+        ]
+      }
+    ]
+  },
+  "exitCode": 1
+}
