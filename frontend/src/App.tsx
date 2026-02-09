@@ -6,17 +6,13 @@ import Navbar from "./components/Navbar"
 
 export default function App() {
   return (
-    <>
+    <div className="font-mono">
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
-        {/* examples */}
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        {/* <Route path="/quest/:id" element={<Quest />} /> */}
       </Routes>
-    </>
+    </div>
   )
 }

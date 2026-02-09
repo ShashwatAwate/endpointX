@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center justify-between px-6 py-4 border-b bg-background font-mono">
+    <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b bg-background font-mono">
       {/* Left side */}
       <div className="flex items-center gap-6">
         <h1 className="text-xl font-bold tracking-tight">
@@ -14,8 +14,9 @@ export default function Navbar() {
         </h1>
 
         <div className="flex gap-2">
-          <Button variant="ghost">/features</Button>
-          <Button variant="ghost">/docs</Button>
+          <Button variant="ghost">/questions</Button>
+          <Button variant="ghost">/daily-quest</Button>
+          <Button variant="ghost">/leaderboards</Button>
         </div>
       </div>
 
@@ -32,4 +33,3 @@ export default function Navbar() {
     </nav>
   )
 }
-
