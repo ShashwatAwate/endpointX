@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "../ui/button";
+import { useTheme } from "../theme-provider";
 
 type CodeEditorProps = {
   language?: string;
@@ -31,6 +32,8 @@ export default function CodeEditor({
   language = "javascript",
   initialCode = EXPRESS_BOILERPLATE,
 }: CodeEditorProps) {
+  const { theme } = useTheme()
+
   const [code, setCode] = useState(initialCode);
 
   const handleSubmit = () => {
@@ -62,7 +65,7 @@ export default function CodeEditor({
           height="100%"
           language={language}
           value={code}
-          theme="vs-dark"
+          theme={theme === "light" ? "vs-light" : "vs-dark"}
           onChange={(value) => setCode(value ?? "")}
           options={{
             fontSize: 14,
