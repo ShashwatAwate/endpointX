@@ -46,7 +46,7 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
         message["test_framework"] = unitTests.get("test_framework")
         message["http_client"] = unitTests.get("http_client")
         message["entry"] = "src/app.js"
-        message["isProblemGeneration"] = 1
+        message["is_problem_generation"] = 1
         message["app_files"] = []
         message["test_files"] = []
 
@@ -68,6 +68,8 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
 
         verificationBody = json.dumps(message).encode("utf-8")
         problemBody = problemDesc
+
+        channel.exchange_declare(exchange=exchangeName,exchange_type="direct",durable=True)
 
         channel.queue_declare(queue=verificationQName,durable=True)
         channel.queue_declare(queue=problemQName,durable=True)

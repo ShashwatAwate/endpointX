@@ -5,9 +5,11 @@ def createContract(problem_description: json):
     """Create problem description from the generated response"""
     try:
         title = problem_description.get('title')
+        id = problem_description.get('id')
         problem_contract = {}
         problem_contract['title'] = title
         problem_contract['endpoints'] = []
+        problem_contract['question_id'] = id
         for endpoint in list(problem_description.get('endpoints')):
             method = endpoint.get('method')
             path = endpoint.get('path')

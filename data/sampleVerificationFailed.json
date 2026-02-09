@@ -1,0 +1,28 @@
+{
+  "status": "failed",
+  "rawOutput": "FAIL  src/sum.test.js\n  ✕ adds two numbers (7 ms)\n\n  ● adds two numbers\n\n    expect(received).toBe(expected)\n\n    Expected: 5\n    Received: 4\n\nTest Suites: 1 failed, 1 total\nTests:       1 failed, 1 total\nSnapshots:   0 total\nTime:        0.531 s\nRan all test suites.",
+  "jestOutput": {
+    "success": false,
+    "numFailedTests": 1,
+    "numPassedTests": 0,
+    "numTotalTests": 1,
+    "numFailedTestSuites": 1,
+    "numPassedTestSuites": 0,
+    "numTotalTestSuites": 1,
+    "testResults": [
+      {
+        "name": "src/sum.test.js",
+        "status": "failed",
+        "message": "expect(received).toBe(expected)\n\nExpected: 5\nReceived: 4",
+        "assertionResults": [
+          {
+            "fullName": "adds two numbers",
+            "status": "failed",
+            "duration": 7
+          }
+        ]
+      }
+    ]
+  },
+  "exitCode": 1
+}
