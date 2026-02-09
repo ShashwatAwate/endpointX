@@ -1,14 +1,12 @@
 package queue
 
-import (
-	"github.com/streadway/amqp"
-)
+import "github.com/streadway/amqp"
 
-func Consume(
+func Produce(
 	ch *amqp.Channel,
 	queueName string,
 	exchangeName string,
-	handler func(amqp.Delivery) error,
+	body []byte,
 ) error {
 	if err := ch.ExchangeDeclare(
 		exchangeName,
@@ -44,28 +42,19 @@ func Consume(
 		return err
 	}
 
-	msgs, err := ch.Consume(
+	err = ch.Publish(
+		"", // default exchange
 		queueName,
-		"",
 		false,
 		false,
-		false,
-		false,
-		nil,
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        body,
+		},
 	)
 	if err != nil {
 		return err
 	}
-
-	go func() {
-		for msg := range msgs {
-			if err := handler(msg); err != nil {
-				_ = msg.Nack(false, true)
-				continue
-			}
-			_ = msg.Ack(false)
-		}
-	}()
 
 	return nil
 }

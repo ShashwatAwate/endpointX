@@ -14,15 +14,18 @@ type File struct {
 }
 
 type Spec struct {
-	ID            string `json:"-"`
-	Language      string `json:"language"`
-	Runtime       string `json:"runtime"`
-	Framework     string `json:"framework"`
-	TestFramework string `json:"test_framework"`
-	HTTPClient    string `json:"http_client"`
-	Entry         string `json:"entry"`
-	AppFiles      []File `json:"app_files"`
-	TestFiles     []File `json:"test_files"`
+	ID                 string `json:"-"`
+	UserID             string `json:"user_id"`
+	QuestionID         string `json:"question_id"`
+	IsProblemGenerated int    `json:"is_problem_generated"`
+	Language           string `json:"language"`
+	Runtime            string `json:"runtime"`
+	Framework          string `json:"framework"`
+	TestFramework      string `json:"test_framework"`
+	HTTPClient         string `json:"http_client"`
+	Entry              string `json:"entry"`
+	AppFiles           []File `json:"app_files"`
+	TestFiles          []File `json:"test_files"`
 }
 
 // NewSpec - this will return a new spec
@@ -49,6 +52,18 @@ func NewSpec(json []byte) (*Spec, error) {
 func (s *Spec) validate() error {
 	if s.Language != "javascript" {
 		return fmt.Errorf("invalid language: %v", s.Language)
+	}
+
+	if s.Entry == "" {
+		s.Entry = "src/app.js"
+	}
+
+	if s.UserID == "" {
+		s.UserID = "NoID"
+	}
+
+	if s.IsProblemGenerated != 1 {
+		s.IsProblemGenerated = 0
 	}
 
 	if len(s.AppFiles) == 0 {

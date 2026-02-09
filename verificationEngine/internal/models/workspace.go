@@ -11,6 +11,7 @@ import (
 
 type Workspace struct {
 	Path string
+	Spec *Spec
 }
 
 // NewWorkspace - creates directory, writes the app files and the test files
@@ -33,7 +34,7 @@ func NewWorkspace(spec *Spec) (*Workspace, error) {
 		return nil, err
 	}
 
-	return &Workspace{Path: dir}, nil
+	return &Workspace{Path: dir, Spec: spec}, nil
 }
 
 // Init - this method initializes the workspace:

@@ -18,10 +18,14 @@ func RunTests(w *models.Workspace) (*models.Result, error) {
 	outputPath := filepath.Join(w.Path, "output.json")
 
 	result := &models.Result{
-		RawOutput: string(output),
-		Status:    models.TestPassed,
-		ExitCode:  0,
-		Jest:      nil,
+		UserID:             w.Spec.UserID,
+		QuestionID:         w.Spec.QuestionID,
+		IsProblemGenerated: w.Spec.IsProblemGenerated,
+		RawOutput:          string(output),
+		AppFiles:           w.Spec.AppFiles,
+		Status:             models.TestPassed,
+		ExitCode:           0,
+		Jest:               nil,
 	}
 
 	if err != nil {

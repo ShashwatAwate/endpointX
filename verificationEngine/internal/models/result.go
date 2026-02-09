@@ -6,10 +6,14 @@ const (
 )
 
 type Result struct {
-	Status    string      `json:"status"`
-	RawOutput string      `json:"rawOutput"`
-	Jest      *JestOutput `json:"jestOutput"`
-	ExitCode  int         `json:"exitCode"`
+	UserID             string      `json:"user_id"`
+	QuestionID         string      `json:"question_id"`
+	IsProblemGenerated int         `json:"isProblemGenerated"`
+	Status             string      `json:"status"`
+	RawOutput          string      `json:"rawOutput"`
+	AppFiles           []File      `json:"app_files"`
+	Jest               *JestOutput `json:"jestOutput"`
+	ExitCode           int         `json:"exitCode"`
 }
 
 type AssertionResult struct {
