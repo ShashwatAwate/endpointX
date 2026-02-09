@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./mode-toggle"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 export default function Navbar() {
+  const location = useLocation()
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b bg-background font-mono">
+    <nav className={`${location.pathname == "/" ? "fixed" : ""} top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b bg-background font-mono`}>
       {/* Left side */}
       <div className="flex items-center gap-6">
         <h1 className="text-xl font-bold tracking-tight">
@@ -14,7 +15,9 @@ export default function Navbar() {
         </h1>
 
         <div className="flex gap-2">
-          <Button variant="ghost">/questions</Button>
+          <Link to={"/question"}>
+            <Button variant="ghost">/questions</Button>
+          </Link>
           <Button variant="ghost">/daily-quest</Button>
           <Button variant="ghost">/leaderboards</Button>
         </div>
