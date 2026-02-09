@@ -12,6 +12,8 @@ type Result struct {
 	Status             string      `json:"status"`
 	RawOutput          string      `json:"rawOutput"`
 	AppFiles           []File      `json:"app_files"`
+	Language           string      `json:"language"`
+	Framework          string      `json:"framework"`
 	Jest               *JestOutput `json:"jestOutput"`
 	ExitCode           int         `json:"exitCode"`
 }

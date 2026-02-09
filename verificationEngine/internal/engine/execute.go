@@ -22,6 +22,8 @@ func RunTests(w *models.Workspace) (*models.Result, error) {
 		QuestionID:         w.Spec.QuestionID,
 		IsProblemGenerated: w.Spec.IsProblemGenerated,
 		RawOutput:          string(output),
+		Language:           w.Spec.Language,
+		Framework:          w.Spec.Framework,
 		AppFiles:           w.Spec.AppFiles,
 		Status:             models.TestPassed,
 		ExitCode:           0,
