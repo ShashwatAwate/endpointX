@@ -28,13 +28,18 @@ TestFiles          []File `json:"test_files"`
 const submitQuestion = async (req, res) => {
   const { id } = req.params;
 
-  try {
-    const {
-      language,
-      userCode,
-    } = req.body;
+  console.log("1");
 
-    const unitTestData = getById(id);
+  try {
+    const { language, userCode } = req.body;
+
+    const unitTestData = await getById(id);
+
+    if (!unitTestData) {
+      return res.status(404).json({
+        error: "Unit tests not found for this question",
+      });
+    }
 
     const payload = {
       user_id: "973bda32-c2f9-4706-ad34-9884f86e26ae",
@@ -46,16 +51,16 @@ const submitQuestion = async (req, res) => {
       test_framework: unitTestData.test_framework,
       http_client: unitTestData.http_client,
       entry: "src/app.js",
-      app_files: {
+      app_files: [{
         path: "src/app.js",
         content: userCode,
-      },
+      }],
       test_files: unitTestData.test_files,
     };
 
     try {
       await publishToVerificationQueue(payload);
-      console.log("req sent to queue now pray")
+      console.log("req sent to queue now pray");
     } catch (e) {
       console.error("rabbitmq publish failed:", e);
       return res.status(503).json({
