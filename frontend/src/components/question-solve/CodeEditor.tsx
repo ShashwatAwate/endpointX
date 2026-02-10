@@ -2,31 +2,14 @@ import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "../ui/button";
 import { useTheme } from "../theme-provider";
+import { Play } from "lucide-react";
+import { EXPRESS_BOILERPLATE } from "@/data/code-editor";
+import { Spinner } from "../ui/spinner";
 
 type CodeEditorProps = {
   language?: string;
   initialCode?: string;
 };
-
-const EXPRESS_BOILERPLATE = `const express = require("express");
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-
-/*
-| Start writing your handlers from here 
-| Example:
-| app.post("/api/example", (req, res) => {
-|   res.json({ message: "Hello World" });
-| });
-*/
-
-app.listen(PORT, () => {
-  console.log(\`Server running on port \${PORT}\`);
-});
-`;
 
 export default function CodeEditor({
   language = "javascript",
@@ -35,10 +18,16 @@ export default function CodeEditor({
   const { theme } = useTheme()
 
   const [code, setCode] = useState(initialCode);
+  const [submitLoading, setSubmitLoading] = useState(false)
 
-  const handleSubmit = () => {
-    console.log("Submitted code:");
-    console.log(code);
+  const handleSubmit = async () => {
+    setSubmitLoading(true);
+    try {
+      await new Promise((res) => setTimeout(res, 2000));
+      console.log("submitted code:\n", code);
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   return (
@@ -50,11 +39,16 @@ export default function CodeEditor({
         </div>
 
         <Button
-          variant="outline"
+          variant={"default"}
           size="sm"
           onClick={handleSubmit}
-          className="font-mono"
+          className="font-mono bg-green-600 hover:bg-green-500 text-secondary"
+          disabled={submitLoading}
         >
+          {
+            submitLoading ? <Spinner data-icon="inline-start" /> : <Play />
+          }
+          {" "}
           Submit
         </Button>
       </div>

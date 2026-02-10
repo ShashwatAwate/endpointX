@@ -24,7 +24,7 @@ export default function QuestionSolve() {
 
   return (
     <div className="h-screen">
-      <ResizablePanelGroup direction="horizontal">
+      <ResizablePanelGroup>
         {/* LEFT – QUESTION */}
         <ResizablePanel defaultSize={40} minSize={25}>
           <QuestionDetail question={question} />
