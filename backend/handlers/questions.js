@@ -1,6 +1,8 @@
 const { getById } = require("../models/queFetch");
 const { publishToVerificationQueue } = require("../queue/rabbitmq");
 
+// COMMENTED OUT OLD HANDLER - using POST /questions/get route instead
+/*
 const getQuestionById = (req, res) => {
   const q = questions.find((item) => item.id === req.params.id);
 
@@ -10,6 +12,7 @@ const getQuestionById = (req, res) => {
 
   res.json(q);
 };
+*/
 
 /*
 UserID             string `json:"user_id"`
@@ -28,20 +31,25 @@ TestFiles          []File `json:"test_files"`
 const submitQuestion = async (req, res) => {
   const { id } = req.params;
 
-  console.log("1");
+  console.log('=== SUBMIT QUESTION ===');
+  console.log('Question ID:', id);
+  console.log('Authenticated user:', req.user.email);
 
   try {
-    const { language, userCode, userID } = req.body;
+    const { language, userCode } = req.body;
+    const userID = req.user.id; // Get user ID from auth middleware instead of request body
 
+    console.log('✅ Getting unit test data for question:', id);
     const unitTestData = await getById(id);
 
     if (!unitTestData) {
+      console.log('❌ Unit tests not found');
       return res.status(404).json({
         error: "Unit tests not found for this question",
       });
     }
 
-
+    console.log('✅ Building verification payload...');
     const payload = {
       user_id: userID,
       question_id: id,
@@ -61,9 +69,9 @@ const submitQuestion = async (req, res) => {
 
     try {
       await publishToVerificationQueue(payload);
-      console.log("req sent to queue now pray");
+      console.log("✅ Request sent to verification queue successfully");
     } catch (e) {
-      console.error("rabbitmq publish failed:", e);
+      console.error("❌ RabbitMQ publish failed:", e);
       return res.status(503).json({
         error: "Verification service unavailable",
       });
@@ -75,12 +83,12 @@ const submitQuestion = async (req, res) => {
     });
 
   } catch (e) {
-    console.error(e);
+    console.error('❌ SUBMIT QUESTION ERROR:', e);
     return res.status(500).json({
       error: "Internal server error",
     });
   }
 };
 
-module.exports = { getQuestionById, submitQuestion };
+module.exports = { submitQuestion }; // Only exporting submitQuestion now (getQuestionById commented out)
 

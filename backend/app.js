@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const authMiddleware = require('./middleware/authMiddleware');
 const app = express();
 
 const authRoutes = require('./routes/auth');
@@ -11,10 +12,24 @@ require("dotenv").config();
 
 app.use(express.json());
 app.use(cookieParser()); // Add cookie parser middleware
-app.use('/auth', authRoutes);
-app.use('/protected', protectedRoute);
-app.use('/question', questionsRoutes);
-app.use('/submission', submissionRoutes);
+
+// 🔓 UNPROTECTED ROUTES (no login required)
+app.use('/auth', authRoutes); // login, signup, logout
+
+// 🛡️ PROTECTED ROUTES (login required) 
+app.use('/protected', authMiddleware, protectedRoute);
+app.use('/questions', authMiddleware, questionsRoutes); // Fixed typo: question -> questions
+app.use('/submissions', authMiddleware, submissionRoutes); // Fixed typo: submission -> submissions
+
+// 🧪 TEST PROTECTED ROUTE - shows how middleware works
+app.get('/test-protected', authMiddleware, (req, res) => {
+  // req.user is available because authMiddleware added it
+  res.json({
+    message: 'This is a protected route!',
+    currentUser: req.user, // Contains { id, email, name }
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
