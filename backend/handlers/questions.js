@@ -10,10 +10,6 @@ const getQuestionById = (req, res) => {
   res.json(q);
 };
 
-// questionID 
-//
-//
-// input req
 /*
 UserID             string `json:"user_id"`
 QuestionID         string `json:"question_id"`
@@ -27,53 +23,65 @@ Entry              string `json:"entry"`
 AppFiles           []File `json:"app_files"`
 TestFiles          []File `json:"test_files"`
 */
+
 const submitQuestion = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   try {
     const {
-      userID,
       questionID,
       language,
       userCode,
     } = req.body;
 
-    if (userID === undefined || userID === "") {
-      throw new Error("user id not found")
+    if (!userID) {
+      return res.status(400).json({ error: "user id not found" });
     }
 
     if (questionID !== id) {
-      throw new Error("questionID mismatch")
+      return res.status(400).json({ error: "questionID mismatch" });
     }
 
-    const unitTestData = getUnitTestFromQuestionID(questionID)
-
-    const appFiles = {
-      path: "src/app.js",
-      content: userCode,
-    }
+    const unitTestData = getUnitTestFromQuestionID(questionID);
 
     const payload = {
-      user_id: userID,
+      user_id: "c4a5d29a - c375 - 46bb- 950f-b4b0fc6f3d0a",
       question_id: questionID,
       is_problem_generated: 0,
-      language: language,
+      language,
       runtime: "node18",
       framework: "express",
       test_framework: unitTestData.test_framework,
       http_client: unitTestData.http_client,
       entry: "src/app.js",
-      app_files: appFiles,
-      test_files: unitTestData.test_files
+      app_files: {
+        path: "src/app.js",
+        content: userCode,
+      },
+      test_files: unitTestData.test_files,
     };
 
-    await publishToVerificationQueue(payload)
+    try {
+      await publishToVerificationQueue(payload);
+    } catch (e) {
+      console.error("rabbitmq publish failed:", e);
+      return res.status(503).json({
+        error: "Verification service unavailable",
+      });
+    }
 
-    // published - 200
+    return res.status(202).json({
+      success: true,
+      message: "Submission queued for verification",
+    });
+
   } catch (e) {
-    console.log(e)
+    console.error(e);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
   }
-}
+};
 
 module.exports = { getQuestionById, submitQuestion };
 
