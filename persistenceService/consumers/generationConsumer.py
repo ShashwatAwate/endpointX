@@ -12,7 +12,7 @@ load_dotenv()
 def main():
     try:
         connectionUrl = os.getenv("RABBITMQ_CONNECTION")
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=connectionUrl))
+        connection = pika.BlockingConnection(pika.URLParameters(connectionUrl))
         channel = connection.channel()
 
         queueName = os.getenv("PROBLEM_GEN_QUEUE_NAME")

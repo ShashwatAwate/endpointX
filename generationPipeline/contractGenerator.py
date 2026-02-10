@@ -24,8 +24,7 @@ def createContract(problem_description: json):
                 'invaraints':invariants
             }
             problem_contract['endpoints'].append(contract)
-        contract_json = dict_to_json(problem_contract) 
-        return contract_json
+        return problem_contract
     except Exception as e:
         print(f"ERROR: in contract generation: {str(e)}")
         raise

@@ -43,13 +43,11 @@ func main() {
 	for res := range results {
 		fmt.Println(res.Status)
 
-		fmt.Println("-----------------------------------------------------")
-
 		if res.Status == models.TestFailed {
-			fmt.Println(res.RawOutput)
+			fmt.Println("-----------------------------------------------------")
+			log.Println(res.RawOutput)
+			fmt.Println("-----------------------------------------------------")
 		}
-
-		fmt.Println("-----------------------------------------------------")
 
 		payload, err := json.Marshal(res)
 		if err != nil {
