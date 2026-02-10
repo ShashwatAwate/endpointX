@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom"
 export default function Navbar() {
   const location = useLocation()
   return (
-    <nav className={`${location.pathname == "/" ? "fixed" : ""} top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b bg-background font-mono`}>
+    <nav className={`${location.pathname == "/" ? "fixed" : ""} h-[10vh] top-0 left-0 w-full z-50 flex items-center justify-between px-6 border-b bg-background font-mono`}>
       {/* Left side */}
       <div className="flex items-center gap-6">
         <h1 className="text-xl font-bold tracking-tight">
