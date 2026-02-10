@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
-	"fmt"
+
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/app"
+	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/queue"
 	"github.com/joho/godotenv"
 	"github.com/streadway/amqp"
@@ -40,6 +42,15 @@ func main() {
 
 	for res := range results {
 		fmt.Println(res.Status)
+
+		fmt.Println("-----------------------------------------------------")
+
+		if res.Status == models.TestFailed {
+			fmt.Println(res.RawOutput)
+		}
+
+		fmt.Println("-----------------------------------------------------")
+
 		payload, err := json.Marshal(res)
 		if err != nil {
 			log.Println("failed to marshal json: ", err)
