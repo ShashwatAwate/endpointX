@@ -43,6 +43,10 @@ func NewSpec(json []byte) (*Spec, error) {
 		return nil, err
 	}
 
+	fmt.Println(spec.TestFiles)
+	fmt.Println("\n\n\n\n----------------")
+	fmt.Println(spec.AppFiles)
+
 	return &spec, nil
 }
 
@@ -58,9 +62,9 @@ func (s *Spec) validate() error {
 		s.Entry = "src/app.js"
 	}
 
-	if s.UserID == "" && s.IsProblemGenerated!=1 {
+	if s.UserID == "" && s.IsProblemGenerated != 1 {
 		// TODO: fix this
-		s.IsProblemGenerated=1
+		s.IsProblemGenerated = 1
 	}
 
 	if s.IsProblemGenerated != 1 {
