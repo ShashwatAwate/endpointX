@@ -69,7 +69,6 @@ func (s *Spec) validate() error {
 
 	if s.IsProblemGenerated != 1 {
 		s.IsProblemGenerated = 0
-		s.UserID = "NoID"
 	}
 
 	if len(s.AppFiles) == 0 {

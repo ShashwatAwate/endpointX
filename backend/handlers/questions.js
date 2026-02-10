@@ -31,7 +31,7 @@ const submitQuestion = async (req, res) => {
   console.log("1");
 
   try {
-    const { language, userCode } = req.body;
+    const { language, userCode, userID } = req.body;
 
     const unitTestData = await getById(id);
 
@@ -41,8 +41,9 @@ const submitQuestion = async (req, res) => {
       });
     }
 
+
     const payload = {
-      user_id: "973bda32-c2f9-4706-ad34-9884f86e26ae",
+      user_id: userID,
       question_id: id,
       is_problem_generated: 0,
       language,
