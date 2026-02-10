@@ -25,12 +25,17 @@ export default function Navbar() {
 
       {/* Right side */}
       <div className="flex gap-4">
-        <Button>
-          <Link to={"/login"}>/login</Link>
-        </Button>
-        <Button>
-          <Link to={"/signup"}>/signup</Link>
-        </Button>
+        <Link to={"/login"}>
+          <Button>
+            /login
+          </Button>
+        </Link>
+
+        <Link to={"/signup"}>
+          <Button>
+            /signup
+          </Button>
+        </Link>
         <ModeToggle />
       </div>
     </nav>
