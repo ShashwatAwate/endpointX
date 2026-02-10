@@ -14,10 +14,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln("error loading dotenv: ", err)
-	}
+	_ = godotenv.Load()
 
 	w := app.NewWorkerPool(15, 100)
 	q, err := queue.New(os.Getenv("RABBIT_MQ_URL"))
