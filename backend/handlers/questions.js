@@ -28,7 +28,6 @@ TestFiles          []File `json:"test_files"`
 const submitQuestion = (req, res) => {
   const { id } = req.params
 
-
   try {
     const {
       userID,
@@ -36,6 +35,10 @@ const submitQuestion = (req, res) => {
       language,
       userCode,
     } = req.body;
+
+    if (userID === undefined || userID === "") {
+      throw new Error("user id not found")
+    }
 
     if (questionID !== id) {
       throw new Error("questionID mismatch")
@@ -62,8 +65,13 @@ const submitQuestion = (req, res) => {
       test_files: unitTestData.test_files
     };
 
-
-
+    //  push
+    //
+    //
+    //  listen
+    //
+    //
+    //  200 status
   } catch (e) {
     console.log(e)
   }
