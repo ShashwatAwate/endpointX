@@ -13,7 +13,7 @@ def consumeVerification():
     """Consumes from verification queue and does processing"""
 
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=os.getenv("RABBITMQ_CONNECTION")))
+        connection = pika.BlockingConnection(pika.URLParameters(os.getenv("RABBITMQ_CONNECTION")))
         channel = connection.channel()
 
         queueName = os.getenv("RES_QUEUE")

@@ -11,6 +11,7 @@ import pika
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 import uuid
+import re
 load_dotenv()
 
 
@@ -34,6 +35,8 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
 
         # adding require prefix to the unit Test code
         prefix = 'const request = require("supertest");\nconst app = require("./src/app");\n\n'
+        suffix = '\n\n module.exports = app; \n'
+
         for file in unitTests.get("files"):
             content = file.get("content")
             content = prefix + content
@@ -44,6 +47,12 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
             path = file.get("path")
             newPath = os.path.join(sampleCodePrefix, path)
             file["path"] = newPath
+            content = file.get('content',"")
+            if content== "":
+                raise Exception("Sample Code content not found")
+            if not re.search(r"module\.exports\s*=\s*app",content):
+                app_content = app_content.rstrip() + suffix
+                app_file["content"] = app_content
 
         message = {}
         message['question_id'] = problemDesc.get('id')
@@ -71,7 +80,7 @@ def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: 
         generationBody['unit_tests'] = unitTests
 
         #RabbitMQ 
-        connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+        connection = pika.BlockingConnection(pika.URLParameters(os.getenv("RABBITMQ_CONNECTION")))
         exchangeName = os.getenv("EXCHANGE")
         verificationQName = os.getenv("VERIFICATION_QUEUE_NAME")
         problemQName = os.getenv("PROBLEM_GEN_QUEUE_NAME")
@@ -102,21 +111,14 @@ if __name__ == "__main__":
         blueprint = createProblemBlueprint()
         print("INFO: Generating problem description")
         description = createProblemDescription(blueprint=blueprint)
-        # print("INFO: Generating contract")
-        # contract = createContract(description)
-        # print("INFO: Generating Test Plan")
-        # testPlan = createUnitTestPlan(contract)
-        # print("INFO:Generating Unit Tests and SampleCode")
-        # with ThreadPoolExecutor(max_workers=2) as executor:
-        #     fut_tests = executor.submit(createUnitTestCode,testPlan,contract)
-        #     fut_sample = executor.submit(createSampleCode,contract)
-        #
-        #     unitTests = fut_tests.result()
-        #     sampleCode = fut_sample.result()
-        # print("INFO: Unit Tests")
-        # print(unitTests)
-        # print("INFO: Sample Code")
-        # print(sampleCode)
-        publishToQueue(problemDesc=description)
+        print("INFO: Generating contract")
+        contract = createContract(description)
+        print("INFO: Generating Test Plan")
+        testPlan = createUnitTestPlan(contract)
+        print("INFO:Generating Unit Tests and Sample Code")
+        testAndCodeData = createUnitTestCode(test_plan=testPlan,contract=contract)
+        unitTests = testAndCodeData.get('unit_tests')
+        sampleCode = testAndCodeData.get('sample_code')
+        publishToQueue(sampleCode=sampleCode,unitTests=unitTests,problemDesc=description)
     except Exception as e:
         print(f"ERROR: in main {str(e)}")

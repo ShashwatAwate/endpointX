@@ -14,15 +14,19 @@ def createUnitTestPlan(contract:json = None):
                 contract = json.load(f)
             
         prompt = f"""
-Generate a sample implementation plan for the following API contract.
+Generate a sample test plan for the following API contract.
 
 Rules:
 - Follow the contract exactly
-- Handle all error cases
 - Do NOT reference tests
 - Do NOT add endpoints
 - FOLLOW the format given in the example, DO NOT COPY, just REFER AS CONTEXT.
 - ONLY OUTPUT IN VALID JSON
+- COVER ONLY THE ESSENTIAL TEST CASES, HAVE A MAXIMUM OF 6 TESTS.
+- ONLY cover errors in API logic, NOT STRICT TESTS.
+- DO NOT ADD ANY EMOJIS.
+- ONLY add SIMPLE LINENT TESTS, that just confirm API Logic.
+- Be LINENT on TYPE CHECKS, do NOT be TOO STRICT.
 
 ---EXAMPLE---
 {{
@@ -70,13 +74,19 @@ FOLLOW THE FOLLOWING OUTPUT FORMAT:
 def createUnitTestCode(test_plan:json,contract:json=None):
     """Create the testing code for the unit tests"""
     try:
-        if not contract:
-            with open("./data/contract.json", "r") as f:
-                contract = json.load(f)
-        prompt=f"""
-Generate ONLY unit tests for the following API contract.
+        if isinstance(contract, str):
+            contract = json.loads(contract)
 
-Hard Rules:
+        if isinstance(test_plan, str):
+            test_plan = json.loads(test_plan)
+
+        if not contract:
+                with open("./data/contract.json", "r") as f:
+                    contract = json.load(f)
+        prompt=f"""
+Generate ONLY unit tests  AND Sample code that passes on these tests for the following API contract.
+
+Test Generation Rules:
 - DO NOT generate any implementation code (NO app.js, NO server code)
 - DO NOT generate any endpoints
 - DO NOT generate any helper modules
@@ -88,10 +98,32 @@ Hard Rules:
 - Do NOT reference any directory names or file locations inside the code
 - DO NOT generate comments, only code
 - KEEP CODE SHORT AND SIMPLE
-- Assume `app` and `request` already exist in the test runtime
-- Follow the contract exactly
-- Follow the test plan exactly
-- Handle all error cases in the tests
+- Assume app and request already exist in the test runtime
+- Follow the contract EXACTLY
+- Follow the test plan EXACTLY
+- DO NOT ADD COMMENTS IN YOUR CODE
+- DO NOT ADD ANY EMOJIS
+
+Sample Code Generation Rules:
+- Follow the contract EXACTLY
+- Generate sample so that ALL UNIT TESTS PASS
+- Implement ONLY the endpoints in the contract
+- Handle ALL error cases explicitly
+- Do NOT reference tests or testing tools
+- Use ONLY JavaScript (CommonJS)
+- Use ONLY Express (no other libraries)
+- Keep the code simple and readable
+- Store data in-memory unless persistence is required
+- Return JSON responses using res.status(...).json(...)
+- Use exact status codes and error formats from the contract
+- Put everything in a single file named app.js
+- Export the Express app using: module.exports = app
+- Do NOT call app.listen()
+- Implementation requirements:
+  Start the file with:
+const express = require('express');
+const app = express();
+app.use(express.json());
 
 ---CONTRACT---
 {contract}
@@ -101,9 +133,10 @@ Hard Rules:
 {test_plan}
 ---TEST PLAN END---
 
-Return output STRICTLY in this JSON format:
+Return output STRICTLY in this JSON format and NOTHING ELSE:
 ```json
 {{
+  "unit_tests":{{
   "language": "javascript",
   "test_framework": "jest",
   "http_client": "supertest",
@@ -113,8 +146,19 @@ Return output STRICTLY in this JSON format:
       "content": "<code>"
     }}
   ]
-}}
+  }},
+  "sample_code":{{
+  "language": "javascript",
+  "framework": "express",
+  "files": [
+    {{
+      "path": "app.js",
+      "content": "<code>"
+    }}
+  ]
+  }}
 
+}}
 ```
 """
         response = call_model(prompt,useCase="unitTest")
