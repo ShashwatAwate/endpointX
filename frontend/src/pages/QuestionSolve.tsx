@@ -26,14 +26,14 @@ export default function QuestionSolve() {
     <div className="h-screen">
       <ResizablePanelGroup>
         {/* LEFT – QUESTION */}
-        <ResizablePanel defaultSize={40} minSize={25}>
+        <ResizablePanel defaultSize="40%" minSize="30%">
           <QuestionDetail question={question} />
         </ResizablePanel>
 
-        <ResizableHandle />
+        <ResizableHandle withHandle />
 
         {/* RIGHT – EDITOR */}
-        <ResizablePanel defaultSize={60} minSize={30}>
+        <ResizablePanel defaultSize="60%" minSize="30%">
           <CodeEditor />
         </ResizablePanel>
       </ResizablePanelGroup>
