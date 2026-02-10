@@ -1,3 +1,4 @@
+const { getById } = require("../models/queFetch");
 const { publishToVerificationQueue } = require("../queue/rabbitmq");
 
 const getQuestionById = (req, res) => {
@@ -29,24 +30,15 @@ const submitQuestion = async (req, res) => {
 
   try {
     const {
-      questionID,
       language,
       userCode,
     } = req.body;
 
-    if (!userID) {
-      return res.status(400).json({ error: "user id not found" });
-    }
-
-    if (questionID !== id) {
-      return res.status(400).json({ error: "questionID mismatch" });
-    }
-
-    const unitTestData = getUnitTestFromQuestionID(questionID);
+    const unitTestData = getById(id);
 
     const payload = {
-      user_id: "c4a5d29a - c375 - 46bb- 950f-b4b0fc6f3d0a",
-      question_id: questionID,
+      user_id: "973bda32-c2f9-4706-ad34-9884f86e26ae",
+      question_id: id,
       is_problem_generated: 0,
       language,
       runtime: "node18",
@@ -63,6 +55,7 @@ const submitQuestion = async (req, res) => {
 
     try {
       await publishToVerificationQueue(payload);
+      console.log("req sent to queue now pray")
     } catch (e) {
       console.error("rabbitmq publish failed:", e);
       return res.status(503).json({
