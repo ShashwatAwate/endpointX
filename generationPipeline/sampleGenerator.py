@@ -6,12 +6,10 @@ from .utils import res_to_json,write_to_json,call_model
 load_dotenv()
 
 
-def createSampleCode(tests_plan:json,contract: json = None):
+def createSampleCode(tests_plan:json,contract: json ):
     """Create a sample code for the given problem statement"""
     try:
-        if not contract:
-            with open("./data/contract.json", "r") as f:
-                contract = json.load(f)
+      
             
         prompt = f"""
 Generate a sample Express implementation for the following API contract.

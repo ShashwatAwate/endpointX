@@ -1,0 +1,12 @@
+{
+    "language": "javascript",
+    "test_framework": "jest",
+    "http_client": "supertest",
+    "files": [
+      {
+        "path": "hello.test.js",
+        "content": "const request = require('supertest');\n\n// The app must be exported from app.js as module.exports = app\nconst app = require('./src/app');\n\ndescribe('GET /hello', () => {\n  test('returns 200 and the exact hello message', async () => {\n    const res = await request(app).get('/hello');\n\n    expect(res.statusCode).toBe(200);\n    expect(res.headers['content-type']).toMatch(/application\\/json/);\n    expect(res.body).toEqual({ message: 'Hello, world!' });\n  });\n\n  test('returns 400 if a request body is provided', async () => {\n    const res = await request(app)\n      .get('/hello')\n      .send({ anything: 'not allowed' });\n\n    expect(res.statusCode).toBe(400);\n    expect(res.headers['content-type']).toMatch(/application\\/json/);\n    expect(res.body).toEqual({ error: 'Request body must be empty' });\n  });\n});\n"
+      }
+    ],
+    "question_id" : "fce4c827-b1fe-4951-94e6-225b983749b5"
+}

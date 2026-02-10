@@ -15,25 +15,9 @@ import re
 load_dotenv()
 
 
-def publishToQueue(sampleCode: json = None, unitTests: json = None,problemDesc: json = None):
+def publishToQueue(sampleCode: json, unitTests: json ,problemDesc: json ):
     """Recieves testcode and sample code, adds two imports and correct paths, and uploads final json to queue"""
     try:
-        BASE_DIR = Path(__file__).resolve().parent.parent   # root/
-        DATA_DIR = BASE_DIR / "data"
-
-        if not sampleCode:
-            with open(DATA_DIR / "sampleCode.json", "r", encoding="utf-8") as f:
-                sampleCode = json.load(f)
-
-        if not unitTests:
-            with open(DATA_DIR / "unitTestSample.json", "r", encoding="utf-8") as f:
-                unitTests = json.load(f)
-
-        if not problemDesc:
-            with open(DATA_DIR / "problemDescSample.json", "r", encoding="utf-8") as f:
-                problemDesc = json.load(f)
-
-        # adding require prefix to the unit Test code
         prefix = 'const request = require("supertest");\nconst app = require("./src/app");\n\n'
         suffix = '\n\n module.exports = app; \n'
 

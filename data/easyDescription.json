@@ -1,0 +1,31 @@
+{
+    "id": "fce4c827-b1fe-4951-94e6-225b983749b5",
+  "title": "Hello World API",
+  "overview": "A minimal API with a single endpoint that returns a greeting.",
+  "endpoints": [
+    {
+      "title": "Get Hello Message",
+      "overview": "Returns a simple greeting message.",
+      "method": "GET",
+      "path": "/hello",
+      "behaviour": "When called, the server responds with a fixed greeting message. No request body is accepted.",
+      "request": {},
+      "responses": {
+        "200": "Success. Returns a JSON object containing a greeting message.",
+        "201": "",
+        "400": "Bad request. Returned if a request body is provided (body must be empty).",
+        "404": "",
+        "409": ""
+      },
+      "invariants": [
+        "Response content-type MUST be application/json.",
+        "The response body MUST contain a string field named 'message'.",
+        "The value of 'message' MUST be exactly 'Hello, world!'."
+      ]
+    }
+  ],
+  "notes": [
+    "This is intentionally minimal to validate the schema format.",
+    "The endpoint has no parameters and no request body."
+  ]
+}

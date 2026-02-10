@@ -1,0 +1,12 @@
+ {
+    "language": "javascript",
+    "framework": "express",
+    "files": [
+      {
+        "path": "app.js",
+        "content": "const express = require('express');\n\nconst app = express();\napp.use(express.json());\n\napp.get('/hello', (req, res) => {\n  // If the client sends a body, reject it.\n  // (This keeps behavior deterministic for the unit test.)\n  if (req.body && Object.keys(req.body).length > 0) {\n    return res.status(400).json({ error: 'Request body must be empty' });\n  }\n\n  return res.status(200).json({ message: 'Hello, world!' });\n});\n\nmodule.exports = app;\n"
+      }
+    ],
+    "question_id":"fce4c827-b1fe-4951-94e6-225b983749b5",
+    "user_id" : "228db211-96de-42f3-b615-25a0d11311c1"
+  }

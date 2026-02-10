@@ -46,8 +46,9 @@ def consumeVerification():
                 with Session() as session:
                     answer = createAnswer(payload=data,session=session)
                     session.commit()
-                    session.close()
                     print(f"INFO: inserted answer in DB {answer.id}")
+                    session.close()
+                    
             ch.basic_ack(delivery_tag=method.delivery_tag)
         
         channel.basic_consume(queue=queueName,on_message_callback=callback)

@@ -71,7 +71,7 @@ FOLLOW THE FOLLOWING OUTPUT FORMAT:
         print(f"ERROR: during creating test plan: {str(e)}")
         raise
 
-def createUnitTestCode(test_plan:json,contract:json=None):
+def createUnitTestCode(test_plan:json,contract:json):
     """Create the testing code for the unit tests"""
     try:
         if isinstance(contract, str):
@@ -80,9 +80,6 @@ def createUnitTestCode(test_plan:json,contract:json=None):
         if isinstance(test_plan, str):
             test_plan = json.loads(test_plan)
 
-        if not contract:
-                with open("./data/contract.json", "r") as f:
-                    contract = json.load(f)
         prompt=f"""
 Generate ONLY unit tests  AND Sample code that passes on these tests for the following API contract.
 
@@ -108,6 +105,7 @@ Sample Code Generation Rules:
 - Follow the contract EXACTLY
 - Generate sample so that ALL UNIT TESTS PASS
 - Implement ONLY the endpoints in the contract
+- DO NOT add comments in the code
 - Handle ALL error cases explicitly
 - Do NOT reference tests or testing tools
 - Use ONLY JavaScript (CommonJS)
