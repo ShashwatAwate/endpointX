@@ -5,8 +5,11 @@ let channel;
 async function getChannel() {
   if (channel) return channel;
 
-  const connection = await amqp.connect(RABBIT_URL);
+  const connection = await amqp.connect(process.env.RABBIT_MQ_URL);
   channel = await connection.createChannel();
+
+  const VERIFICATION_EXCHANGE = process.env.VERIFICATION_EXCHANGE;
+  const VERIFICATION_QUEUE_NAME = process.env.VERIFICATION_QUEUE_NAME;
 
   await channel.assertExchange(VERIFICATION_EXCHANGE, "direct", {
     durable: true,

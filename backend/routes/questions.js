@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
 
 // GET /questions/:id - single question
 router.get("/:id", getQuestionById)
+// push to verification queue route
 router.post("/:id", submitQuestion)
 
 module.exports = router;

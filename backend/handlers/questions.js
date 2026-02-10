@@ -1,3 +1,5 @@
+const { publishToVerificationQueue } = require("../queue/rabbitmq");
+
 const getQuestionById = (req, res) => {
   const q = questions.find((item) => item.id === req.params.id);
 
@@ -25,7 +27,7 @@ Entry              string `json:"entry"`
 AppFiles           []File `json:"app_files"`
 TestFiles          []File `json:"test_files"`
 */
-const submitQuestion = (req, res) => {
+const submitQuestion = async (req, res) => {
   const { id } = req.params
 
   try {
@@ -65,13 +67,9 @@ const submitQuestion = (req, res) => {
       test_files: unitTestData.test_files
     };
 
-    //  push
-    //
-    //
-    //  listen
-    //
-    //
-    //  200 status
+    await publishToVerificationQueue(payload)
+
+    // published - 200
   } catch (e) {
     console.log(e)
   }
