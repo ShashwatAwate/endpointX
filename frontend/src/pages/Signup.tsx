@@ -5,18 +5,24 @@ import { AuthCard } from "@/components/AuthCard"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import type { RegisterPayload } from "@/types/user"
+import { useState } from "react"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function Signup() {
   const { register: formRegister, handleSubmit } = useForm<RegisterPayload>()
+  const [loading, setLoading] = useState(false)
   const { register } = useAuth()
   const navigate = useNavigate()
 
   const onSubmit = async (data: RegisterPayload) => {
+    setLoading(true)
     try {
       await register(data)
       navigate("/") // or dashboard
     } catch (err) {
       console.error("Signup failed", err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -61,7 +67,8 @@ export default function Signup() {
           <pre className="text-neutral-500 mt-2">{`}`}</pre>
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Spinner />}
           Create Account
         </Button>
 

@@ -2,20 +2,28 @@ import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AuthCard } from "@/components/AuthCard"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import type { LoginPayload } from "@/types/user"
+import { useState } from "react"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginPayload>()
   const { login } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const onSubmit = async (data: LoginPayload) => {
+    setLoading(true)
     try {
       await login(data)
       console.log("Logged in successfully")
+      navigate("/")
     } catch (err) {
       console.error("Login failed", err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -54,7 +62,8 @@ export default function Login() {
         </div>
 
         {/* Submit */}
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Spinner />}
           Send Request
         </Button>
 

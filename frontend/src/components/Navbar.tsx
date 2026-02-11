@@ -2,10 +2,23 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./mode-toggle"
 import { Link, useLocation } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
+import { useState } from "react"
 
 export default function Navbar() {
   const location = useLocation()
   const { user, logout } = useAuth()
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = async () => {
+    setLoading(true)
+    try {
+      await logout()
+    } catch (err) {
+      console.log("error logging out: ", err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <nav className={`${location.pathname == "/" ? "fixed" : ""} h-[10vh] top-0 left-0 w-full z-50 flex items-center justify-between px-6 border-b bg-background font-mono`}>
@@ -27,9 +40,8 @@ export default function Navbar() {
       </div>
 
       {/* Right side */}
-      <Button onClick={logout}>Logout</Button>
       {
-        !user ?
+        user === null ?
           <div className="flex gap-4">
             <Link to={"/login"}>
               <Button>
@@ -44,7 +56,7 @@ export default function Navbar() {
             </Link>
             <ModeToggle />
           </div> :
-          <h1 className="text-lg">Logged in bro</h1>
+          <Button onClick={handleLogout} disabled={loading}>Logout</Button>
       }
     </nav>
   )
