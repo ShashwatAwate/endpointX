@@ -7,12 +7,10 @@ import { EXPRESS_BOILERPLATE } from "@/data/code-editor";
 import { Spinner } from "../ui/spinner";
 import { pushToSubmiussionPipeline, startPolling } from "@/lib/api";
 import { useParams } from "react-router-dom";
-import type { BackendResult } from "@/types/submit";
 
 type CodeEditorProps = {
   language?: string;
   initialCode?: string;
-  result: BackendResult
 };
 
 export default function CodeEditor({
