@@ -24,7 +24,7 @@ app.use('/auth', authRoutes); // login, signup, logout
 // 🛡️ PROTECTED ROUTES (login required) 
 app.use('/protected', authMiddleware, protectedRoute);
 app.use('/questions', authMiddleware, questionsRoutes); // Fixed typo: question -> questions
-app.use('/submissions', authMiddleware, submissionRoutes); // Fixed typo: submission -> submissions
+app.use('/submission', authMiddleware, submissionRoutes); // Fixed typo: submission -> submissions
 
 // 🧪 TEST PROTECTED ROUTE - shows how middleware works
 app.get('/test-protected', authMiddleware, (req, res) => {

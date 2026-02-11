@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 router.post('/test', (req, res) => {
   console.log('Test route hit!');
   console.log('Received:', req.body);
-  
+
   res.json({
     message: 'Test route working!',
     received: req.body
@@ -19,14 +19,14 @@ router.post('/test', (req, res) => {
 router.post('/signup', async (req, res) => {
   console.log('=== SIGNUP WITH DATABASE ===');
   console.log('Request body:', req.body);
-  
+
   try {
     const { name, email, password } = req.body;
     console.log('Extracted fields:');
     console.log('- name:', name, typeof name);
     console.log('- email:', email, typeof email);
     console.log('- password:', password ? '[HIDDEN]' : 'undefined', typeof password);
-    
+
     if (!email || !password) {
       console.log('❌ Missing email or password');
       return res.status(400).json({ error: 'email and password required' });
@@ -35,14 +35,14 @@ router.post('/signup', async (req, res) => {
     console.log('✅ Generating UUID...');
     const id = uuidv4();
     console.log('Generated UUID:', id, typeof id);
-    
+
     console.log('✅ Calling User.create...');
     const created = await User.create(id, name || '', email, password);
     console.log('✅ User created successfully:', created);
-    
-    res.status(201).json({ 
-      message: 'User registered successfully', 
-      user: { id: created.id, name: created.name, email: created.email } 
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: { id: created.id, name: created.name, email: created.email }
     });
   } catch (error) {
     console.error('❌ SIGNUP ERROR:');
@@ -55,13 +55,13 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   console.log('=== LOGIN WITH DATABASE ===');
   console.log('Request body:', req.body);
-  
+
   try {
     const { email, password } = req.body;
     console.log('Extracted fields:');
     console.log('- email:', email, typeof email);
     console.log('- password:', password ? '[HIDDEN]' : 'undefined', typeof password);
-    
+
     if (!email || !password) {
       console.log('❌ Missing email or password');
       return res.status(400).json({ error: 'email and password required' });
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
     console.log('✅ Looking up user by email...');
     const user = await User.findByEmail(email);
     console.log('User found:', user ? 'YES' : 'NO');
-    
+
     if (!user) {
       console.log('❌ User not found');
       return res.status(401).json({ error: 'Authentication failed' });
@@ -79,7 +79,7 @@ router.post('/login', async (req, res) => {
     console.log('✅ Comparing passwords...');
     const passwordMatch = await User.comparePassword(password, user.password);
     console.log('Password match:', passwordMatch ? 'YES' : 'NO');
-    
+
     if (!passwordMatch) {
       console.log('❌ Password mismatch');
       return res.status(401).json({ error: 'Authentication failed' });
@@ -89,21 +89,21 @@ router.post('/login', async (req, res) => {
     const secret = process.env.JWT_SECRET || 'your-secret-key';
     const token = jwt.sign({ userId: user.id, email: user.email }, secret, { expiresIn: '1h' });
     console.log('✅ Token generated successfully');
-    
+
     // Set token as cookie
     res.cookie('authToken', token, {
       httpOnly: true, // Prevents XSS attacks
       secure: false, // Set to true in production with HTTPS
       sameSite: 'lax', // CSRF protection
-      maxAge: 3600000 // 1 hour in milliseconds
+      maxAge: 3600000 * 5 // 1 hour in milliseconds
     });
-    
+
     console.log('✅ Cookie set successfully');
-    
-    res.status(200).json({ 
+
+    res.status(200).json({
       message: 'Login successful',
       token, // Still include in response for debugging
-      user: { id: user.id, name: user.name, email: user.email } 
+      user: { id: user.id, name: user.name, email: user.email }
     });
   } catch (error) {
     console.error('❌ LOGIN ERROR:');
@@ -116,12 +116,12 @@ router.post('/login', async (req, res) => {
 // Get current user from cookie
 router.get('/user', async (req, res) => {
   console.log('=== GET CURRENT USER ===');
-  
+
   try {
     // Get token from cookies
     const token = req.cookies.authToken;
     console.log('Token from cookie:', token ? 'EXISTS' : 'MISSING');
-    
+
     if (!token) {
       console.log('❌ No token found in cookies');
       return res.status(401).json({ error: 'Not authenticated' });
@@ -137,7 +137,7 @@ router.get('/user', async (req, res) => {
     console.log('✅ Looking up user in database...');
     const user = await User.findByEmail(decoded.email);
     console.log('User found:', user ? 'YES' : 'NO');
-    
+
     if (!user) {
       console.log('❌ User not found in database');
       return res.status(404).json({ error: 'User not found' });
@@ -150,21 +150,21 @@ router.get('/user', async (req, res) => {
       email: user.email,
       created_at: user.created_at
     };
-    
+
     console.log('✅ Returning user data');
     res.status(200).json({ user: userData });
-    
+
   } catch (error) {
     console.error('❌ GET USER ERROR:');
     console.error('- Error message:', error.message);
-    
+
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({ error: 'Invalid token' });
     }
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expired' });
     }
-    
+
     res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
@@ -173,7 +173,7 @@ router.get('/user', async (req, res) => {
 router.post('/logout', (req, res) => {
   // Simply clear the authToken cookie
   res.clearCookie('authToken');
-  
+
   res.status(200).json({ message: 'Logged out successfully' });
 });
 

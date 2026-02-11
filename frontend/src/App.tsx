@@ -5,7 +5,6 @@ import Signup from "./pages/Signup"
 import Navbar from "./components/Navbar"
 import QuestionsPage from "./pages/Questions"
 import QuestionSolve from "./pages/QuestionSolve"
-import ProtectedRoute from "./components/routing/ProtectedRoute"
 
 export default function App() {
   return (
@@ -18,9 +17,7 @@ export default function App() {
 
         <Route path="/question" element={<QuestionsPage />} />
 
-        {/* <Route element={<ProtectedRoute />}> */}
         <Route path="/question/:id" element={<QuestionSolve />} />
-        {/* </Route> */}
       </Routes>
     </div >
   )

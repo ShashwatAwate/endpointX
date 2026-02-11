@@ -5,10 +5,14 @@ import { useTheme } from "../theme-provider";
 import { Play } from "lucide-react";
 import { EXPRESS_BOILERPLATE } from "@/data/code-editor";
 import { Spinner } from "../ui/spinner";
+import { pushToSubmiussionPipeline, startPolling } from "@/lib/api";
+import { useParams } from "react-router-dom";
+import type { BackendResult } from "@/types/submit";
 
 type CodeEditorProps = {
   language?: string;
   initialCode?: string;
+  result: BackendResult
 };
 
 export default function CodeEditor({
@@ -16,15 +20,17 @@ export default function CodeEditor({
   initialCode = EXPRESS_BOILERPLATE,
 }: CodeEditorProps) {
   const { theme } = useTheme()
-
+  const { id } = useParams();
   const [code, setCode] = useState(initialCode);
   const [submitLoading, setSubmitLoading] = useState(false)
 
   const handleSubmit = async () => {
     setSubmitLoading(true);
     try {
-      await new Promise((res) => setTimeout(res, 2000));
-      console.log("submitted code:\n", code);
+      const res = await pushToSubmiussionPipeline(id, language, code);
+      console.log("something in the way", res);
+      const testRes = await startPolling(id);
+      console.log(testRes);
     } finally {
       setSubmitLoading(false);
     }
