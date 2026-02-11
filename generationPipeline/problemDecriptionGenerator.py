@@ -97,6 +97,7 @@ Output JSON ONLY in this structure:
         response = call_model(prompt,useCase="problem")
         json_res = res_to_json(response.text)
         json_res["id"] = str(uuid.uuid4())
+        json_res['difficulty'] = blueprint.get('difficulty')
         return json_res
     except Exception as e:
         print(f"ERROR: During generation of problem description {str(e)}")

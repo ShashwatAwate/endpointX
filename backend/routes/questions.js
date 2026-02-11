@@ -54,13 +54,13 @@ router.get('/', async (req, res) => {
 });
 
 // POST /questions/get - fetch specific question by ID from JSON body
-router.post('/get', async (req, res) => {
+router.get('/:id', async (req, res) => {
   console.log('=== GET SPECIFIC QUESTION ===');
   console.log('Authenticated user:', req.user.email);
   console.log('Request body:', req.body);
   
   try {
-    const { questionId } = req.body;
+    const {questionId } = req.params;
     console.log('Question ID requested:', questionId);
     
     if (!questionId) {

@@ -8,10 +8,11 @@ import json
 import os
 from pathlib import Path
 import pika
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor,as_completed
 from dotenv import load_dotenv
 import uuid
 import re
+import time
 load_dotenv()
 
 
@@ -88,21 +89,46 @@ def publishToQueue(sampleCode: json, unitTests: json ,problemDesc: json ):
         print(f"ERROR: Publishing to queue failed {str(e)}")
         raise
 
+def pipeline(job_id: int):
+    """Full generation pipeline"""
+    print(f"INFO {job_id}: Generating blueprint")
+    blueprint = createProblemBlueprint()
+    print(f"INFO {job_id}: Generating problem description")
+    description = createProblemDescription(blueprint=blueprint)
+    print(f"INFO {job_id}: Generating contract")
+    contract = createContract(description)
+    print(f"INFO {job_id} : Generating Test Plan")
+    testPlan = createUnitTestPlan(contract)
+    print(f"INFO {job_id} :Generating Unit Tests and Sample Code")
+    testAndCodeData = createUnitTestCode(test_plan=testPlan,contract=contract)
+    unitTests = testAndCodeData.get('unit_tests')
+    sampleCode = testAndCodeData.get('sample_code')
+    publishToQueue(sampleCode=sampleCode,unitTests=unitTests,problemDesc=description)
+
+def runBatch(numQuestions=5,maxWorkers=5):
+    """Running a batch of questions"""
+    try:
+        with ThreadPoolExecutor(max_workers=maxWorkers) as executor:
+            futures = []
+
+            for job_id in range(numQuestions):
+                futures.append(executor.submit(pipeline,job_id))
+            
+            for f in as_completed(futures):
+                f.result()
+    except Exception as e:
+        print(f"INFO: running batch failed {str(e)}")
+        raise
 
 if __name__ == "__main__":
     try:
-        print("INFO: Generating blueprint")
-        blueprint = createProblemBlueprint()
-        print("INFO: Generating problem description")
-        description = createProblemDescription(blueprint=blueprint)
-        print("INFO: Generating contract")
-        contract = createContract(description)
-        print("INFO: Generating Test Plan")
-        testPlan = createUnitTestPlan(contract)
-        print("INFO:Generating Unit Tests and Sample Code")
-        testAndCodeData = createUnitTestCode(test_plan=testPlan,contract=contract)
-        unitTests = testAndCodeData.get('unit_tests')
-        sampleCode = testAndCodeData.get('sample_code')
-        publishToQueue(sampleCode=sampleCode,unitTests=unitTests,problemDesc=description)
+       numGenerated = 0 
+       while numGenerated <=20:
+            print("INFO: Starting batch....")
+            runBatch()
+            print("INFO: Generation complete, sleeping for 1.30 min")
+            time.sleep(90)
+            numGenerated += 5
+           
     except Exception as e:
         print(f"ERROR: in main {str(e)}")

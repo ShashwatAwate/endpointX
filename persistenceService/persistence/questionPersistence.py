@@ -31,7 +31,7 @@ def createQuestion(payload:json,session):
         id = payload.get("id")
         description = payload.get("overview")
         api_spec = payload.get("endpoints")
-        difficulty = "medium"
+        difficulty = payload.get('difficulty')
         id_uuid = uuid.UUID(id) if id else None
         
         q = Questions(

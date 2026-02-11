@@ -163,8 +163,6 @@ Return output STRICTLY in this JSON format and NOTHING ELSE:
         response_json = res_to_json(response.text)
         id = contract.get('question_id')
         response_json['question_id'] = id
-        path = "./data/unitTestSample.json"
-        write_to_json(response_json,path)
         return response_json
     except Exception as e:
         print(f"ERROR: during generating unit test codes: {str(e)}")

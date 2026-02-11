@@ -8,7 +8,7 @@ router.get("/:questionId", async (req, res) => {
  const {questionId} = req.params;
  const userId = req.userId;
 
- const timeoutMS = 250000;
+ const timeoutMS = 30000;
  const pollIntervalMS = 500;
 
  const start = Date.now();
