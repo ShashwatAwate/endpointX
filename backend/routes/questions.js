@@ -53,18 +53,17 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /questions/get - fetch specific question by ID from JSON body
-router.get('/:id', async (req, res) => {
-  console.log('=== GET SPECIFIC QUESTION ===');
+// POST /questions/:id - fetch specific question by ID from JSON body
+router.get('/:questionId', async (req, res) => {
   console.log('Authenticated user:', req.user.email);
   console.log('Request body:', req.body);
 
   try {
-    const {questionId } = req.params;
+    const { questionId } = req.params;
     console.log('Question ID requested:', questionId);
 
     if (!questionId) {
-      console.log('❌ Missing questionId in request body');
+      console.log('❌ Missing questionId in request params');
       return res.status(400).json({ error: 'questionId is required' });
     }
 
