@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const authMiddleware = require('./middleware/authMiddleware');
 const app = express();
+const cors = require("cors");
 
 const authRoutes = require('./routes/auth');
 const protectedRoute = require('./routes/protectedRoute');
@@ -12,6 +13,10 @@ require("dotenv").config();
 
 app.use(express.json());
 app.use(cookieParser()); // Add cookie parser middleware
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}))
 
 // 🔓 UNPROTECTED ROUTES (no login required)
 app.use('/auth', authRoutes); // login, signup, logout

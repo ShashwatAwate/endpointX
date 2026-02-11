@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import type { Question } from "@/data/questions";
+import type { Question } from "@/types/question";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
@@ -27,9 +27,9 @@ export function QuestionCard({ question }: Props) {
           {question.difficulty && (
             <Badge
               variant={
-                question.difficulty === "Easy"
+                question.difficulty === "easy"
                   ? "secondary"
-                  : question.difficulty === "Medium"
+                  : question.difficulty === "medium"
                     ? "default"
                     : "destructive"
               }

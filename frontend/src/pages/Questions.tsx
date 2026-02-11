@@ -1,7 +1,31 @@
-import { questions } from "@/data/questions";
 import { QuestionCard } from "@/components/questions/QuestionCard";
+import type { Question } from "@/data/questions";
+import { getAllQuestions } from "@/lib/api";
+import { useEffect, useState } from "react";
 
 export default function QuestionsPage() {
+  const [questions, setQuestions] = useState<Question[] | null>(null)
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const q = await getAllQuestions()
+        setQuestions(q)
+        console.log(q)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    fetchQuestions()
+  }, [])
+
+  if (questions === null) {
+    return (
+      <h1 className="text-xl">Finding questions wait</h1>
+    )
+  }
+
   return (
     <div className="container mx-auto py-10 space-y-6">
       <div>

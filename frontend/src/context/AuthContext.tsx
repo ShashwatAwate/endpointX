@@ -1,21 +1,5 @@
+import type { LoginPayload, RegisterPayload, User } from "@/types/user";
 import { createContext, useContext, useEffect, useState } from "react";
-
-type User = {
-  id: string;
-  email: string;
-  name?: string;
-};
-
-type LoginPayload = {
-  email: string;
-  password: string;
-};
-
-type RegisterPayload = {
-  email: string;
-  password: string;
-  name?: string;
-};
 
 type AuthContextType = {
   user: User | null;
@@ -37,14 +21,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await fetch(`${API_BASE}/auth/me`, {
+        const res = await fetch(`${API_BASE}/auth/user`, {
           credentials: "include",
         });
 
         if (!res.ok) throw new Error("Not authenticated");
 
-        const data: User = await res.json();
-        setUser(data);
+        const d = await res.json();
+        if (!d.user) {
+          console.log("u fucked up")
+        }
+        const userData: User = d.user;
+        setUser(userData);
       } catch {
         setUser(null);
       } finally {
@@ -70,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Fetch user after login
-    const me = await fetch(`${API_BASE}/auth/me`, {
+    const me = await fetch(`${API_BASE}/auth/user`, {
       credentials: "include",
     });
 
@@ -79,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const register = async (data: RegisterPayload) => {
-    const res = await fetch(`${API_BASE}/auth/register`, {
+    const res = await fetch(`${API_BASE}/auth/signup`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -92,11 +80,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw new Error("Registration failed");
     }
 
-    const me = await fetch(`${API_BASE}/auth/me`, {
+    const me = await fetch(`${API_BASE}/auth/user`, {
       credentials: "include",
     });
 
-    const userData: User = await me.json();
+    const d = await me.json();
+    if (!d.user) {
+      console.log("u fucked up")
+    }
+    const userData: User = d.user;
     setUser(userData);
   };
 

@@ -3,17 +3,20 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AuthCard } from "@/components/AuthCard"
 import { Link } from "react-router-dom"
-
-type LoginForm = {
-  email: string
-  password: string
-}
+import { useAuth } from "@/context/AuthContext"
+import type { LoginPayload } from "@/types/user"
 
 export default function Login() {
-  const { register, handleSubmit } = useForm<LoginForm>()
+  const { register, handleSubmit } = useForm<LoginPayload>()
+  const { login } = useAuth()
 
-  const onSubmit = (data: LoginForm) => {
-    console.log("Login data:", data)
+  const onSubmit = async (data: LoginPayload) => {
+    try {
+      await login(data)
+      console.log("Logged in successfully")
+    } catch (err) {
+      console.error("Login failed", err)
+    }
   }
 
   return (
