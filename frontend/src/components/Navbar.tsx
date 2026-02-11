@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext"
 
 export default function Navbar() {
   const location = useLocation()
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
 
   return (
     <nav className={`${location.pathname == "/" ? "fixed" : ""} h-[10vh] top-0 left-0 w-full z-50 flex items-center justify-between px-6 border-b bg-background font-mono`}>
@@ -27,6 +27,7 @@ export default function Navbar() {
       </div>
 
       {/* Right side */}
+      <Button onClick={logout}>Logout</Button>
       {
         !user ?
           <div className="flex gap-4">

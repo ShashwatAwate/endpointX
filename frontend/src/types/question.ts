@@ -17,7 +17,7 @@ export interface Question {
   id: string;
   title: string;
   description: string;
-  difficulty: "easy" | "medium" | "hard";
+  difficulty?: string;
   api_spec: ApiSpec[];
   entry_point: string | null;
   created_at: string

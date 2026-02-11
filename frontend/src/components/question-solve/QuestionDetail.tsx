@@ -1,18 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import type { Question } from "@/types/question";
 
-type QuestionDetailProps = {
-  question: {
-    title: string;
-    description: string;
-    difficulty?: string;
-    api_spec?: any;
-    entry_point?: string;
-    created_at: string;
-  };
-};
-
-export default function QuestionDetail({ question }: QuestionDetailProps) {
+export default function QuestionDetail({ question }: { question: Question }) {
   return (
     <div className="h-full p-6 overflow-auto space-y-6">
       <div className="space-y-2">

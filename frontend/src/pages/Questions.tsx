@@ -1,5 +1,5 @@
 import { QuestionCard } from "@/components/questions/QuestionCard";
-import type { Question } from "@/data/questions";
+import type { Question } from "@/types/question";
 import { getAllQuestions } from "@/lib/api";
 import { useEffect, useState } from "react";
 

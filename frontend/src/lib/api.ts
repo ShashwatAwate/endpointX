@@ -25,3 +25,26 @@ export const getAllQuestions = async (): Promise<Question[]> => {
     throw error;
   }
 };
+
+export const getQuestionById = async (id: string | undefined): Promise<Question> => {
+  try {
+    const res = await fetch(`${BASE_URL}/questions/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err || "Failed to fetch questions");
+    }
+
+    const data = await res.json();
+    return data.question;
+  } catch (error) {
+    console.error("Error fetching questions:", error);
+    throw error;
+  }
+}

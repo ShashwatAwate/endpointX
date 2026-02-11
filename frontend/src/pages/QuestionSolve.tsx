@@ -6,17 +6,32 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 
-import { questions } from "@/data/questions";
+import type { Question } from "@/types/question";
 import QuestionDetail from "@/components/question-solve/QuestionDetail";
 import CodeEditor from "@/components/question-solve/CodeEditor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Result from "@/components/question-solve/Result";
+import { getQuestionById } from "@/lib/api";
 
 export default function QuestionSolve() {
   const { id } = useParams();
-  const question = questions.find((q) => q.id === id);
+  const [question, setQuestion] = useState<Question | null>(null);
   const [qWindow, setQWindow] = useState(true)
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const q = await getQuestionById(id)
+        setQuestion(q)
+        console.log(q)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    fetchQuestions()
+  }, [])
 
   const setQuestionWindow = () => {
     setQWindow(true)
