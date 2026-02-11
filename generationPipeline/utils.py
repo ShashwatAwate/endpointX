@@ -46,7 +46,18 @@ def write_to_json(content:dict, path:str):
         print("Wrting to json file failed")
         raise
 
-def call_model(prompt:str,useCase:UseCase):
+def is_quota_error(e: Exception) -> bool:
+    msg = str(e).lower()
+    return (
+        "quota" in msg
+        or "rate limit" in msg
+        or "resource exhausted" in msg
+        or "429" in msg
+        or "too many requests" in msg
+    )
+
+
+def call_model(prompt:str,useCase:UseCase,job_id:int):
     try:
         useCaseMapping = {
         UseCase.PROBLEM: "PROBLEM_GEN_API_KEY",
@@ -54,14 +65,29 @@ def call_model(prompt:str,useCase:UseCase):
         UseCase.UNIT_TEST: "UNIT_TEST_GEN_API_KEY",
         UseCase.SAMPLE_CODE: "SAMPLE_CODE_GEN_API_KEY"
         }
-        keyStr = useCaseMapping.get(useCase)
+        prefix  = useCaseMapping.get(useCase)
+        if not prefix:
+            raise ValueError(f"No key prefix mapping for useCase={useCase}")
+        keyName = prefix+str(job_id+1)
+        key = os.getenv(keyName)
+        if not key:
+            raise RuntimeError(f"No API keys found for prefix {keyName}")
+
         model = os.getenv("MODEL_NAME")
-        client = genai.Client(api_key=os.getenv(keyStr))
-        response = client.models.generate_content(
-            model = model,
-            contents = prompt
-        )
-        return response
+
+
+        try:        
+            client = genai.Client(api_key=key)
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt
+            )
+            return response
+        except Exception as e:
+            if is_quota_error(e):
+                print(f"ERROR: Resource exhausted for key {keyName}")
+                raise
+
 
     except Exception as e:
         print(f"ERROR: during model generation: {str(e)}")

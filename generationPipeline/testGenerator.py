@@ -6,12 +6,10 @@ from .utils import res_to_json,write_to_json,call_model
 load_dotenv()
 
 
-def createUnitTestPlan(contract:json = None):
+def createUnitTestPlan(job_id:int,contract:json):
     """Create a unit test plan"""
     try:
-        if not contract:
-            with open("./data/contract.json", "r") as f:
-                contract = json.load(f)
+      
             
         prompt = f"""
 Generate a sample test plan for the following API contract.
@@ -64,14 +62,14 @@ FOLLOW THE FOLLOWING OUTPUT FORMAT:
 }}
 ```
 """
-        response = call_model(prompt,useCase="testPlan")
+        response = call_model(prompt,useCase="testPlan",job_id=job_id)
         response_json = res_to_json(response.text)
         return response_json
     except Exception as e: 
         print(f"ERROR: during creating test plan: {str(e)}")
         raise
 
-def createUnitTestCode(test_plan:json,contract:json):
+def createUnitTestCode(test_plan:json,contract:json,job_id:int):
     """Create the testing code for the unit tests"""
     try:
         if isinstance(contract, str):
@@ -159,7 +157,7 @@ Return output STRICTLY in this JSON format and NOTHING ELSE:
 }}
 ```
 """
-        response = call_model(prompt,useCase="unitTest")
+        response = call_model(prompt,useCase="unitTest",job_id=job_id)
         response_json = res_to_json(response.text)
         id = contract.get('question_id')
         response_json['question_id'] = id

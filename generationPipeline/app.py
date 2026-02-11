@@ -94,18 +94,18 @@ def pipeline(job_id: int):
     print(f"INFO {job_id}: Generating blueprint")
     blueprint = createProblemBlueprint()
     print(f"INFO {job_id}: Generating problem description")
-    description = createProblemDescription(blueprint=blueprint)
+    description = createProblemDescription(blueprint=blueprint,job_id=job_id)
     print(f"INFO {job_id}: Generating contract")
     contract = createContract(description)
     print(f"INFO {job_id} : Generating Test Plan")
-    testPlan = createUnitTestPlan(contract)
+    testPlan = createUnitTestPlan(contract=contract,job_id=job_id)
     print(f"INFO {job_id} :Generating Unit Tests and Sample Code")
-    testAndCodeData = createUnitTestCode(test_plan=testPlan,contract=contract)
+    testAndCodeData = createUnitTestCode(test_plan=testPlan,contract=contract,job_id=job_id)
     unitTests = testAndCodeData.get('unit_tests')
     sampleCode = testAndCodeData.get('sample_code')
     publishToQueue(sampleCode=sampleCode,unitTests=unitTests,problemDesc=description)
-
-def runBatch(numQuestions=5,maxWorkers=5):
+    print(f"INFO {job_id}: Messages Published")
+def runBatch(numQuestions=1,maxWorkers=4):
     """Running a batch of questions"""
     try:
         with ThreadPoolExecutor(max_workers=maxWorkers) as executor:

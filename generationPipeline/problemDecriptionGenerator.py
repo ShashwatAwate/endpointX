@@ -6,7 +6,7 @@ load_dotenv()
 
 
 
-def createProblemDescription(blueprint):
+def createProblemDescription(blueprint,job_id:int):
     """Creates a problem description"""
     try:
         #pprint.pprint(f"INFO:{blueprint}",indent=4)
@@ -25,9 +25,6 @@ Hard rules:
 - Invariants must be short and enforceable
 - Use ONLY the blueprint fields (do not invent new ones)
 
-Global response format:
-All responses MUST be JSON using ONE consistent schema. Define response bodies as exact strings describing that schema.
-
 Request field requirements (for every field):
 type: string|number|integer|boolean
 required: true|false
@@ -38,6 +35,13 @@ Rules:
 - Wrong type → 400
 - null allowed only if nullable=true
 - "" allowed only if allow_empty=true
+
+FINAL OUTPUT RULE:
+- Your entire output MUST be exactly one markdown fenced code block
+- It MUST start with: ```json
+- It MUST end with: ```
+- Inside the block must be STRICT JSON (double quotes only, true/false/null only)
+- No text before or after the code block
 
 Mandatory consistency:
 - Validation happens BEFORE existence/uniqueness checks
@@ -94,7 +98,7 @@ Output JSON ONLY in this structure:
 ```
 """
 
-        response = call_model(prompt,useCase="problem")
+        response = call_model(prompt,useCase="problem",job_id=job_id)
         json_res = res_to_json(response.text)
         json_res["id"] = str(uuid.uuid4())
         json_res['difficulty'] = blueprint.get('difficulty')
