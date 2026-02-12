@@ -43,10 +43,6 @@ func NewSpec(json []byte) (*Spec, error) {
 		return nil, err
 	}
 
-	fmt.Println(spec.TestFiles)
-	fmt.Println("\n\n\n\n----------------")
-	fmt.Println(spec.AppFiles)
-
 	return &spec, nil
 }
 

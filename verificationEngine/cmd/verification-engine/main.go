@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/app"
-	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/models"
 	"github.com/ShashwatAwate/endpointX/verificationEngine/internal/queue"
 	"github.com/joho/godotenv"
 	"github.com/streadway/amqp"
@@ -39,12 +38,6 @@ func main() {
 
 	for res := range results {
 		fmt.Println(res.Status)
-
-		if res.Status == models.TestFailed {
-			fmt.Println("-----------------------------------------------------")
-			log.Println(res.RawOutput)
-			fmt.Println("-----------------------------------------------------")
-		}
 
 		payload, err := json.Marshal(res)
 		if err != nil {
