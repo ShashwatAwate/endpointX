@@ -14,9 +14,12 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cookieParser()); // Add cookie parser middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: [
+    "http://localhost:5173",
+    "https://endpoint-x-y6k7.vercel.app"
+  ],
   credentials: true,
-}))
+}));
 
 // 🔓 UNPROTECTED ROUTES (no login required)
 app.use('/auth', authRoutes); // login, signup, logout
