@@ -1,8 +1,25 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { Question } from "@/types/question";
+import { Spinner } from "../ui/spinner";
 
-export default function QuestionDetail({ question }: { question: Question }) {
+export default function QuestionDetail({ questionLoading, question }: { questionLoading: boolean, question: Question | undefined }) {
+  if (questionLoading) {
+    return (
+      <div className="flex h-full w-full">
+        <Spinner></Spinner>
+      </div>
+    )
+  }
+
+  if (!question) {
+    return (
+      <div className="flex h-full w-full">
+        <h1 className="text-xl">Question Not Found</h1>
+      </div>
+    )
+  }
+
   return (
     <div className="h-full p-6 overflow-auto space-y-6">
       <div className="space-y-2">

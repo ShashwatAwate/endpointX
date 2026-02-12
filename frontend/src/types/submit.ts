@@ -1,25 +1,40 @@
-type AssertionResult = {
-  status: "passed" | "failed";
-  fullName: string;
-  duration: number;
-};
+type CodeFiles = {
+  path: string,
+  content: string,
+}
 
-type TestSuite = {
-  status: "passed" | "failed";
-  message: string;
-  assertionResults: AssertionResult[];
-};
+type TestResult = {
+  numFailedTestSuites: number;
+  numFailedTests: number;
+  numPassedTestSuites: number;
+  numPassedTests: number;
+  numTotalTestSuites: number;
+  numTotalTests: number;
+  success: boolean;
+  testResults: Result[]
+}
 
-export type BackendResult = {
+type Result = {
+  name: string;
   status: string;
+  message: string;
+  assertionResults?: AssertionResult[]
+}
+
+type AssertionResult = {
+  fullName: string;
+  status: string;
+  duration: number
+}
+
+export type SubmitResult = {
+  id: string;
+  user_id: string;
+  question_id: string;
+  code_files: CodeFiles[];
   language: string;
   framework: string;
-  submitted_at: string;
-  test_results: {
-    success: boolean;
-    testResults: TestSuite[];
-    numTotalTests: number;
-    numFailedTests: number;
-    numPassedTests: number;
-  };
-};
+  status: string;
+  score?: number;
+  test_results: TestResult
+}

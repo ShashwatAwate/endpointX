@@ -1,38 +1,26 @@
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "../ui/button";
 import { useTheme } from "../theme-provider";
 import { Play } from "lucide-react";
-import { EXPRESS_BOILERPLATE } from "@/data/code-editor";
 import { Spinner } from "../ui/spinner";
-import { pushToSubmiussionPipeline, startPolling } from "@/lib/api";
-import { useParams } from "react-router-dom";
 
 type CodeEditorProps = {
-  language?: string;
-  initialCode?: string;
+  language: string;
+  code: string;
+  setCode: Dispatch<SetStateAction<string>>;
+  handleSubmit: () => Promise<void>;
+  submitLoading: boolean;
 };
 
 export default function CodeEditor({
   language = "javascript",
-  initialCode = EXPRESS_BOILERPLATE,
+  code,
+  setCode,
+  handleSubmit,
+  submitLoading,
 }: CodeEditorProps) {
   const { theme } = useTheme()
-  const { id } = useParams();
-  const [code, setCode] = useState(initialCode);
-  const [submitLoading, setSubmitLoading] = useState(false)
-
-  const handleSubmit = async () => {
-    setSubmitLoading(true);
-    try {
-      const res = await pushToSubmiussionPipeline(id, language, code);
-      console.log("something in the way", res);
-      const testRes = await startPolling(id);
-      console.log(testRes);
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
 
   return (
     <div className="h-full flex flex-col">

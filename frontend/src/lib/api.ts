@@ -1,4 +1,5 @@
 import type { Question } from "@/types/question";
+import type { SubmitResult } from "@/types/submit";
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 export const getAllQuestions = async (): Promise<Question[]> => {
@@ -72,7 +73,7 @@ export const pushToSubmiussionPipeline = async (id: string | undefined, language
   }
 }
 
-export const startPolling = async (id: string | undefined) => {
+export const startPolling = async (id: string | undefined): Promise<SubmitResult | null> => {
   try {
     console.log("sending req to polling thingy")
     const res = await fetch(`${BASE_URL}/submission/${id}`, {
@@ -93,4 +94,6 @@ export const startPolling = async (id: string | undefined) => {
   catch (err) {
     console.error("Error in polling ", err)
   }
+
+  return null
 }
